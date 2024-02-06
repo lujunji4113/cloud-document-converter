@@ -11,11 +11,11 @@ import {
   transformOperationsToPhrasingContent,
   type Operation,
 } from "./phrasing-content";
-import { Toast } from "./toast";
+import { User, Toast, PageMain } from "./env";
 import type * as mdast from "mdast";
 
 i18next.init({
-  lng: window.User?.language === "zh" ? "zh" : "en",
+  lng: User?.language === "zh" ? "zh" : "en",
   resources: {
     en: {
       translation: {
@@ -512,20 +512,23 @@ const stringifyDocument = (root: mdast.Root) =>
 
 const downloadAsMarkdown = async () => {
   try {
-    if (!window.PageMain) {
-      Toast.warn(i18next.t("not_support"));
+    if (!PageMain) {
+      Toast?.warning({ content: i18next.t("not_support") });
 
       return;
     }
 
-    const rootBlock = window.PageMain.blockManager.model.rootBlockModel;
+    const rootBlock = PageMain.blockManager.model.rootBlockModel;
     if (rootBlock.children.some((block) => block.snapshot.type === "pending")) {
-      Toast.warn(i18next.t("content_loading"));
+      Toast?.warning({
+        content: i18next.t("content_loading"),
+      });
 
       return;
     }
 
-    Toast.loading(i18next.t("downloading", { progress: "0" }), {
+    Toast?.loading({
+      content: i18next.t("downloading", { progress: "0" }),
       keepAlive: true,
       key: "downloading",
     });
@@ -543,19 +546,17 @@ const downloadAsMarkdown = async () => {
 
       const updateLoading = () => {
         downloadedItemsCount++;
-        Toast.loading(
-          i18next.t("downloading", {
+        Toast?.loading({
+          content: i18next.t("downloading", {
             progress: Math.floor((downloadedItemsCount / allItemsCount) * 100),
           }),
-          {
-            keepAlive: true,
-            key: "downloading",
-          }
-        );
+          keepAlive: true,
+          key: "downloading",
+        });
       };
 
       const closeLoading = () => {
-        Toast.remove("downloading");
+        Toast?.remove("downloading");
       };
 
       if (!hasImages) {
@@ -577,7 +578,9 @@ const downloadAsMarkdown = async () => {
                 zipFs.addBlob(imageFileName, await response.blob());
                 image.url = imageFileName;
               } catch {
-                Toast.error(i18next.t("failed_to_download", { name }));
+                Toast?.error({
+                  content: i18next.t("failed_to_download", { name }),
+                });
               }
             }
 
@@ -596,7 +599,7 @@ const downloadAsMarkdown = async () => {
 
       closeLoading();
 
-      Toast.success(i18next.t("download_complete"));
+      Toast?.success({ content: i18next.t("download_complete") });
 
       return blob;
     };
@@ -606,9 +609,9 @@ const downloadAsMarkdown = async () => {
       extensions: [ext],
     });
   } catch (error) {
-    Toast.remove("downloading");
+    Toast?.remove("downloading");
 
-    Toast.error(i18next.t("unknown_error"));
+    Toast?.error({ content: i18next.t("unknown_error") });
 
     console.error(error);
   }
