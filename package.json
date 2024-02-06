@@ -1,0 +1,38 @@
+{
+  "name": "cloud-document-converter",
+  "version": "1.0.0",
+  "description": "Convert lark cloud documents to markdown",
+  "scripts": {
+    "prebuild": "shx rm -rf dist",
+    "build": "npm run prebuild && rollup --config --environment BUILD:production && shx cp -r static/* dist",
+    "test": "vitest"
+  },
+  "keywords": [
+    "lark",
+    "markdown"
+  ],
+  "author": "Junji Lu",
+  "dependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@types/mdast": "^4.0.3",
+    "@zip.js/zip.js": "^2.7.34",
+    "browser-fs-access": "^0.35.0",
+    "i18next": "^23.8.2",
+    "lodash-es": "^4.17.21",
+    "mdast-util-gfm-strikethrough": "^2.0.0",
+    "mdast-util-gfm-table": "^2.0.0",
+    "mdast-util-gfm-task-list-item": "^2.0.0",
+    "mdast-util-to-markdown": "^2.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "chrome-types": "^0.1.255",
+    "rollup": "^4.9.6",
+    "shx": "^0.3.4",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  }
+}
