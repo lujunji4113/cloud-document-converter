@@ -1,6 +1,6 @@
 {
   "name": "cloud-document-converter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert lark cloud documents to markdown",
   "scripts": {
     "prebuild": "shx rm -rf dist",

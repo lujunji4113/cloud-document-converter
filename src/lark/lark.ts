@@ -13,6 +13,7 @@ import {
 } from "./phrasing-content";
 import { User, Toast, PageMain } from "./env";
 import type * as mdast from "mdast";
+import { isPhrasingContent } from "../utils";
 
 i18next.init({
   lng: User?.language === "zh" ? "zh" : "en",
@@ -468,7 +469,7 @@ const parseBlock = <T extends mdast.Nodes>(
     tableCell.children = parseBlocks(
       { parent: tableCell, images },
       block.children
-    );
+    ).filter(isPhrasingContent);
 
     return tableCell as T;
   }
