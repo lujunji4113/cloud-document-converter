@@ -4,7 +4,8 @@
   "description": "Convert lark cloud documents to markdown",
   "scripts": {
     "prebuild": "shx rm -rf dist",
-    "build": "npx tsc --noEmit && npm run prebuild && rollup --config --environment BUILD:production && shx cp -r static/* dist",
+    "build": "npx tsc --noEmit && rollup --config --environment BUILD:production",
+    "postbuild": "shx cp -r static/* dist",
     "test": "vitest"
   },
   "keywords": [
