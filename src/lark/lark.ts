@@ -535,7 +535,7 @@ const downloadAsMarkdown = async () => {
     });
 
     let { root, images } = parseDocument(rootBlock);
-    const documentTitle = rootBlock.zoneState.allText.slice(0, -1);
+    const documentTitle = "doc";
     const hasImages = images.length > 0;
     const ext = hasImages ? ".zip" : ".md";
 
