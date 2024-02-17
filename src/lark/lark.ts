@@ -387,7 +387,7 @@ const parseBlock = <T extends mdast.Nodes>(
   if (block.type === BlockType.IMAGE) {
     const name = block.snapshot.image.name;
     const caption = (
-      block.snapshot.image.caption.text.initialAttributedTexts.text?.[0] ?? ""
+      block.snapshot.image.caption?.text.initialAttributedTexts.text?.[0] ?? ""
     ).slice(0, -1);
     const image: mdast.Image = {
       type: "image",
