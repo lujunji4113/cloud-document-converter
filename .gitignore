@@ -3,3 +3,6 @@ node_modules
 
 # production
 dist
+
+# pnpm
+.pnpm-store
