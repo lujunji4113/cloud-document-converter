@@ -2,6 +2,9 @@
   "download_as_markdown": {
     "message": "Download as Markdown"
   },
+  "copy_as_markdown": {
+    "message": "Copy as Markdown"
+  },
   "by_me_a_coffee": {
     "message": "By me a coffee"
   },

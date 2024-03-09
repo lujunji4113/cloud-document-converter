@@ -6,3 +6,7 @@ dist
 
 # pnpm
 .pnpm-store
+
+# turborepo
+.turbo
+

@@ -1,10 +1,14 @@
 import { test, describe, expect } from "vitest";
-import { transformOperationsToPhrasingContent } from "../src/lark/phrasing-content";
+import {
+  BlockType,
+  transformOperationsToPhrasingContents,
+  transformer,
+} from "../../src/lark/docx";
 
 describe("code span", () => {
   test("simple code span", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           insert: "code",
           attributes: {
@@ -24,7 +28,7 @@ describe("code span", () => {
 
   test("code span in strong emphasis", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           insert: "a",
           attributes: {
@@ -68,7 +72,7 @@ describe("code span", () => {
 
   test("code span range intersect strong emphasis range", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           attributes: {
             bold: "true",
@@ -123,7 +127,7 @@ describe("code span", () => {
 describe("emphasis and strong emphasis", () => {
   test("simple emphasis", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           insert: "emphasis",
           attributes: {
@@ -148,7 +152,7 @@ describe("emphasis and strong emphasis", () => {
 
   test("simple strong emphasis", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           insert: "strong emphasis",
           attributes: {
@@ -173,7 +177,7 @@ describe("emphasis and strong emphasis", () => {
 
   test("emphasis in strong emphasis", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           attributes: {
             bold: "true",
@@ -226,7 +230,7 @@ describe("emphasis and strong emphasis", () => {
 
   test("emphasis range intersect strong emphasis range", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           attributes: {
             bold: "true",
@@ -280,7 +284,7 @@ describe("emphasis and strong emphasis", () => {
 describe("delete", () => {
   test("simple delete", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           insert: "a",
           attributes: {
@@ -305,7 +309,7 @@ describe("delete", () => {
 
   test("nesting are possible", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           attributes: {
             bold: "true",
@@ -375,7 +379,7 @@ describe("delete", () => {
 describe("link", () => {
   test("simple link", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           insert: "a",
           attributes: {
@@ -404,7 +408,7 @@ describe("link", () => {
 describe("mark priority", () => {
   test("strong > emphasis", () => {
     expect(
-      transformOperationsToPhrasingContent([
+      transformOperationsToPhrasingContents([
         {
           attributes: {
             bold: "true",
@@ -447,5 +451,28 @@ describe("mark priority", () => {
         ],
       },
     ]);
+  });
+});
+
+describe("divider", () => {
+  test("one divider", () => {
+    expect(
+      transformer.transform({
+        type: BlockType.PAGE,
+        children: [
+          {
+            type: BlockType.DIVIDER,
+            children: [],
+          },
+        ],
+      }).node
+    ).toStrictEqual({
+      type: "root",
+      children: [
+        {
+          type: "thematicBreak",
+        },
+      ],
+    });
   });
 });

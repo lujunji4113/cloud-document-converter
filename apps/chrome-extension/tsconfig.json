@@ -1,0 +1,4 @@
+{
+  "extends": "@dolphin/typescript-config/base.json",
+  "include": ["src"]
+}

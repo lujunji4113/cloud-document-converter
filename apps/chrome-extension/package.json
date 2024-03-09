@@ -1,0 +1,26 @@
+{
+  "name": "@dolphin/chrome-extension",
+  "version": "1.0.3",
+  "scripts": {
+    "clean": "rm -rf bundles dist",
+    "copy": "cp -R _locales bundles images manifest.json popup.html popup.js dist",
+    "build": "rollup -c && mkdir dist && npm run copy",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@dolphin/typescript-config": "workspace:^",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "chrome-types": "^0.1.255",
+    "glob": "^10.3.10",
+    "rollup": "^4.12.1",
+    "tslib": "^2.6.2"
+  },
+  "dependencies": {
+    "@dolphin/common": "workspace:^",
+    "@dolphin/lark": "workspace:^",
+    "@zip.js/zip.js": "^2.7.40",
+    "browser-fs-access": "^0.35.0",
+    "i18next": "^23.10.1"
+  }
+}

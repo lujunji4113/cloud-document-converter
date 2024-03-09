@@ -1,0 +1,19 @@
+{
+  "name": "@dolphin/rollup-config",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./lib": "./lib.js"
+  },
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "glob": "^10.3.10"
+  },
+  "devDependencies": {
+    "rollup": "^4.12.1"
+  },
+  "peerDependencies": {
+    "rollup": "^4.12.1"
+  }
+}

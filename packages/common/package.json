@@ -1,0 +1,36 @@
+{
+  "name": "@dolphin/common",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "default": "./dist/utils.js"
+    },
+    "./mdast": {
+      "types": "./dist/mdast.d.ts",
+      "default": "./dist/mdast.js"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "rollup -c",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@dolphin/rollup-config": "workspace:^",
+    "@dolphin/typescript-config": "workspace:^",
+    "@types/mdast": "^4.0.3",
+    "rollup": "^4.12.1"
+  },
+  "dependencies": {
+    "mdast-util-gfm-strikethrough": "^2.0.0",
+    "mdast-util-gfm-table": "^2.0.0",
+    "mdast-util-gfm-task-list-item": "^2.0.0",
+    "mdast-util-to-markdown": "^2.1.0"
+  }
+}

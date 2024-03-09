@@ -1,6 +1,4 @@
-export interface User {
-  language: string;
-}
+const noop = () => {};
 
 interface ToastOptions {
   content: string;
@@ -17,16 +15,29 @@ export interface Toast {
   remove: (key: string) => void;
 }
 
-export interface PageMain {
-  blockManager: {
-    model: {
-      rootBlockModel: import("./lark").Root;
-    };
-  };
+const defaultToast: Toast = {
+  error: noop,
+  warning: noop,
+  info: noop,
+  loading: noop,
+  success: noop,
+  remove: noop,
+};
+
+export const Toast = window.Toast ?? defaultToast;
+
+export interface User {
+  language: string;
 }
 
 export const User = window.User;
 
-export const Toast = window.Toast;
+export interface PageMain {
+  blockManager: {
+    model: {
+      rootBlockModel: import("./docx").PageBlock;
+    };
+  };
+}
 
 export const PageMain = window.PageMain;
