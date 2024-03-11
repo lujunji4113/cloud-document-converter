@@ -8,7 +8,8 @@
   "dependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
-    "glob": "^10.3.10"
+    "glob": "^10.3.10",
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
     "rollup": "^4.12.1"

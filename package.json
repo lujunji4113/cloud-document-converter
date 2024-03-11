@@ -14,5 +14,8 @@
   "author": "Junji Lu",
   "devDependencies": {
     "turbo": "^1.12.5"
+  },
+  "dependencies": {
+    "core-js": "3.36.0"
   }
 }

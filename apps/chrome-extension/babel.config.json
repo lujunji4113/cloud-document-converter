@@ -1,11 +1,12 @@
 {
   "presets": [
+    "@babel/preset-typescript",
     [
       "@babel/preset-env",
       {
         "targets": "defaults and fully supports es6-module",
         "useBuiltIns": "usage",
-        "corejs": "3.6.5"
+        "corejs": "3.36.0"
       }
     ]
   ]
