@@ -1,6 +1,30 @@
+import i18next from "i18next";
 import { docx, Toast } from "@dolphin/lark";
 import { generatePublicUrl, makePublicUrlEffective } from "@dolphin/lark/image";
 import { isDefined, stringify } from "@dolphin/common";
+
+enum TranslationKey {
+  FAILED_TO_COPY_IMAGES = "failed_to_copy_images",
+  UNKNOWN_ERROR = "unknown_error",
+}
+
+i18next.init({
+  lng: docx.language,
+  resources: {
+    en: {
+      translations: {
+        [TranslationKey.FAILED_TO_COPY_IMAGES]: "Failed to copy images",
+        [TranslationKey.UNKNOWN_ERROR]: "Unknown error during download",
+      },
+    },
+    zh: {
+      translations: {
+        [TranslationKey.FAILED_TO_COPY_IMAGES]: "复制图片失败",
+        [TranslationKey.UNKNOWN_ERROR]: "下载过程中出现未知错误",
+      },
+    },
+  },
+});
 
 const main = async () => {
   const { root, images } = docx.intoMarkdownAST();
@@ -20,24 +44,12 @@ const main = async () => {
     })
     .filter(isDefined);
 
-  Toast.loading({
-    content: "获取图片中",
-    keepAlive: true,
-    key: "fetching",
-  });
-
   const isSuccess = await makePublicUrlEffective(Object.fromEntries(tokens));
-  if (isSuccess) {
-    Toast.success({
-      content: "获取图片结束",
-    });
-  } else {
+  if (!isSuccess) {
     Toast.error({
-      content: "获取图片失败",
+      content: i18next.t(TranslationKey.FAILED_TO_COPY_IMAGES),
     });
   }
-
-  Toast.remove("fetching");
 
   const markdown = stringify(root);
 
@@ -48,4 +60,8 @@ const main = async () => {
   ]);
 };
 
-main();
+main().catch(() => {
+  Toast.error({
+    content: i18next.t(TranslationKey.UNKNOWN_ERROR),
+  });
+});

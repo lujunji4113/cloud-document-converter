@@ -6,11 +6,15 @@ import { fs } from "@zip.js/zip.js";
 
 enum TranslationKey {
   CONTENT_LOADING = "content_loading",
-  FAILED_TO_DOWNLOAD = "failed_to_download",
   UNKNOWN_ERROR = "unknown_error",
   NOT_SUPPORT = "not_support",
-  DOWNLOADING = "downloading",
-  DOWNLOAD_COMPLETE = "download_complete",
+  DOWNLOADING_IMAGES = "downloading_images",
+  DOWNLOAD_IMAGES_COMPLETE = "download_images_complete",
+  FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image",
+}
+
+enum ToastKey {
+  DOWNLOADING_IMAGES = "downloading_images",
 }
 
 i18next.init({
@@ -21,26 +25,27 @@ i18next.init({
         translation: {
           [TranslationKey.CONTENT_LOADING]:
             "Part of the content is still loading and cannot be downloaded at the moment. Please wait for loading to complete and retry",
-          [TranslationKey.FAILED_TO_DOWNLOAD]: "Failed to download {{name}}",
           [TranslationKey.UNKNOWN_ERROR]: "Unknown error during download",
           [TranslationKey.NOT_SUPPORT]:
             "This is not a lark document page and cannot be downloaded as Markdown",
-          [TranslationKey.DOWNLOADING]:
-            "Download progress: {{progress}}% (please do not refresh or close the page)",
-          [TranslationKey.DOWNLOAD_COMPLETE]: "Download complete",
+          [TranslationKey.DOWNLOADING_IMAGES]:
+            "Download images progress: {{progress}}% (please do not refresh or close the page)",
+          [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "Download images complete",
+          [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]:
+            "Failed to download image {{name}}",
         },
       },
       zh: {
         translation: {
           [TranslationKey.CONTENT_LOADING]:
             "部分内容仍在加载中，暂时无法下载。请等待加载完成后重试",
-          [TranslationKey.FAILED_TO_DOWNLOAD]: "下载 {{name}} 失败",
           [TranslationKey.UNKNOWN_ERROR]: "下载过程中出现未知错误",
           [TranslationKey.NOT_SUPPORT]:
             "这不是一个飞书文档页面，无法下载为 Markdown",
-          [TranslationKey.DOWNLOADING]:
-            "下载进度：{{progress}}%（请不要刷新或关闭页面）",
-          [TranslationKey.DOWNLOAD_COMPLETE]: "下载完成",
+          [TranslationKey.DOWNLOADING_IMAGES]:
+            "下载图片进度：{{progress}}%（请不要刷新或关闭页面）",
+          [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "下载图片完成",
+          [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]: "下载图片 {{name}} 失败",
         },
       },
     },
@@ -48,120 +53,120 @@ i18next.init({
 });
 
 const main = async () => {
-  try {
-    if (!docx.rootBlock) {
-      Toast.warning({ content: i18next.t(TranslationKey.NOT_SUPPORT) });
+  if (!docx.rootBlock) {
+    Toast.warning({ content: i18next.t(TranslationKey.NOT_SUPPORT) });
 
-      return;
-    }
+    return;
+  }
 
-    if (!docx.isReady()) {
-      Toast.warning({
-        content: i18next.t(TranslationKey.CONTENT_LOADING),
-      });
-
-      return;
-    }
-
-    Toast.loading({
-      content: i18next.t(TranslationKey.DOWNLOADING, { progress: "0" }),
-      keepAlive: true,
-      key: "downloading",
+  if (!docx.isReady()) {
+    Toast.warning({
+      content: i18next.t(TranslationKey.CONTENT_LOADING),
     });
 
-    let { root, images } = docx.intoMarkdownAST();
-    const documentTitle = "doc";
-    const hasImages = images.length > 0;
-    const ext = hasImages ? ".zip" : ".md";
+    return;
+  }
 
-    const toBlob = async () => {
-      let blob: Blob;
+  let { root, images } = docx.intoMarkdownAST();
+  const documentTitle = "doc";
+  const hasImages = images.length > 0;
+  const ext = hasImages ? ".zip" : ".md";
 
-      let allItemsCount = images.length + 1;
-      let downloadedItemsCount = 0;
+  const toBlob = async () => {
+    let blob: Blob;
 
-      const updateLoading = () => {
-        downloadedItemsCount++;
-        Toast.loading({
-          content: i18next.t(TranslationKey.DOWNLOADING, {
-            progress: Math.floor((downloadedItemsCount / allItemsCount) * 100),
-          }),
-          keepAlive: true,
-          key: "downloading",
-        });
-      };
+    let allItemsCount = images.length + 1;
+    let downloadedItemsCount = 0;
 
-      const closeLoading = () => {
-        Toast.remove("downloading");
-      };
+    const updateLoading = () => {
+      downloadedItemsCount++;
+      Toast.loading({
+        content: i18next.t(TranslationKey.DOWNLOADING_IMAGES, {
+          progress: Math.floor((downloadedItemsCount / allItemsCount) * 100),
+        }),
+        keepAlive: true,
+        key: ToastKey.DOWNLOADING_IMAGES,
+      });
+    };
 
-      if (!hasImages) {
-        const markdown = stringify(root);
+    const closeLoading = () => {
+      Toast.remove(ToastKey.DOWNLOADING_IMAGES);
+    };
 
-        updateLoading();
+    if (!hasImages) {
+      const markdown = stringify(root);
 
-        blob = new Blob([markdown]);
-      } else {
-        let zipFs = new fs.FS();
+      updateLoading();
 
-        await Promise.allSettled(
-          images.map(async (image, index) => {
-            if (image.data) {
-              const { name, fetchSources } = image.data;
-              let blobUrl = (await fetchSources())?.src;
-              if (!blobUrl) {
-                Toast.error({
-                  content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD, {
-                    name,
-                  }),
-                });
+      blob = new Blob([markdown]);
+    } else {
+      let zipFs = new fs.FS();
 
-                return;
-              }
+      Toast.loading({
+        content: i18next.t(TranslationKey.DOWNLOADING_IMAGES, {
+          progress: "0",
+        }),
+        keepAlive: true,
+        key: ToastKey.DOWNLOADING_IMAGES,
+      });
 
-              try {
-                const imageFileName = `${index}-${name}`;
-                const response = await fetch(blobUrl);
-                zipFs.addBlob(imageFileName, await response.blob());
-                image.url = imageFileName;
-              } catch {
-                Toast.error({
-                  content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD, {
-                    name,
-                  }),
-                });
-              }
+      await Promise.allSettled(
+        images.map(async (image, index) => {
+          if (image.data) {
+            const { name, fetchSources } = image.data;
+            let blobUrl = (await fetchSources())?.src;
+            if (!blobUrl) {
+              Toast.error({
+                content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {
+                  name,
+                }),
+              });
+
+              return;
             }
 
-            updateLoading();
-          })
-        );
+            try {
+              const imageFileName = `${index}-${name}`;
+              const response = await fetch(blobUrl);
+              zipFs.addBlob(imageFileName, await response.blob());
+              image.url = imageFileName;
+            } catch {
+              Toast.error({
+                content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {
+                  name,
+                }),
+              });
+            }
+          }
 
-        const markdown = stringify(root);
-
-        updateLoading();
-
-        zipFs.addText(`${documentTitle}.md`, markdown);
-
-        blob = await zipFs.exportBlob();
-      }
+          updateLoading();
+        })
+      );
 
       closeLoading();
 
-      Toast.success({ content: i18next.t(TranslationKey.DOWNLOAD_COMPLETE) });
+      Toast.success({
+        content: i18next.t(TranslationKey.DOWNLOAD_IMAGES_COMPLETE),
+      });
 
-      return blob;
-    };
+      const markdown = stringify(root);
 
-    await fileSave(toBlob(), {
-      fileName: `${documentTitle}${ext}`,
-      extensions: [ext],
-    });
-  } catch {
-    Toast.remove("downloading");
+      zipFs.addText(`${documentTitle}.md`, markdown);
 
-    Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) });
-  }
+      blob = await zipFs.exportBlob();
+    }
+
+    return blob;
+  };
+
+  await fileSave(toBlob(), {
+    fileName: `${documentTitle}${ext}`,
+    extensions: [ext],
+  });
 };
 
-main();
+main().catch(() => {
+  Toast.remove("downloading");
+
+  Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) });
+});
