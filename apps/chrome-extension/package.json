@@ -2,9 +2,9 @@
   "name": "@dolphin/chrome-extension",
   "version": "1.0.3",
   "scripts": {
-    "clean": "rm -rf bundles dist",
+    "clean": "rm -rf bundles dist/*",
     "copy": "cp -R _locales bundles images manifest.json popup.html popup.js dist",
-    "build": "rollup -c && mkdir dist && npm run copy",
+    "build": "rollup -c && mkdir -p dist && npm run copy",
     "check": "tsc --noEmit"
   },
   "devDependencies": {
