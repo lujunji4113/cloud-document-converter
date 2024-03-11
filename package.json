@@ -3,9 +3,9 @@
   "version": "1.0.3",
   "description": "Convert lark cloud documents to markdown",
   "scripts": {
-    "build": "turbo build",
-    "check": "turbo check",
-    "clean": "turbo clean"
+    "build": "turbo run build",
+    "check": "turbo run check",
+    "clean": "turbo run clean"
   },
   "keywords": [
     "lark",
