@@ -107,8 +107,8 @@ const main = async () => {
         await Promise.allSettled(
           images.map(async (image, index) => {
             if (image.data) {
-              const { name, sources } = image.data;
-              let blobUrl = (await sources)?.src;
+              const { name, fetchSources } = image.data;
+              let blobUrl = (await fetchSources())?.src;
               if (!blobUrl) {
                 Toast.error({
                   content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD, {

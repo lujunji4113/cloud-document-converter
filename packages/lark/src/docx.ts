@@ -14,7 +14,8 @@ import { PageMain, User } from "./env";
 declare module "mdast" {
   interface ImageData {
     name: string;
-    sources: Promise<ImageSources | null>;
+    token: string;
+    fetchSources: () => Promise<ImageSources | null>;
   }
 
   interface ListItemData {
@@ -149,19 +150,21 @@ interface TextBlock extends Block {
   type: BlockType.TEXT;
 }
 
+interface ImageCaption {
+  text: {
+    initialAttributedTexts: {
+      text: { 0: string } | null;
+    };
+  };
+}
+
 interface ImageBlockData {
   token: string;
   width: number;
   height: number;
   mimeType: string;
   name: string;
-  caption: {
-    text: {
-      initialAttributedTexts: {
-        text: { 0: string } | null;
-      };
-    };
-  };
+  caption?: ImageCaption;
 }
 
 interface ImageSources {
@@ -605,21 +608,24 @@ class Transformer {
         return paragraph;
       }
       case BlockType.IMAGE: {
-        const name = block.snapshot.image.name;
-        const caption = (
-          block.snapshot.image.caption?.text.initialAttributedTexts.text?.[0] ??
-          ""
+        const { caption, name, token } = block.snapshot.image;
+        const alt = (
+          caption?.text.initialAttributedTexts.text?.[0] ?? ""
         ).slice(0, -1);
         const image: mdast.Image = {
           type: "image",
           url: "",
-          alt: caption,
+          alt,
           data: {
             name,
-            sources: fetchImageSources(block),
+            token,
+            fetchSources: () => fetchImageSources(block),
           },
         };
-        return this.parent?.type === "root" || this.parent?.type === "tableCell"
+
+        this.images.push(image);
+
+        return this.parent?.type === "tableCell"
           ? image
           : { type: "paragraph", children: [image] };
       }
