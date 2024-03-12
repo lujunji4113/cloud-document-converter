@@ -3,7 +3,7 @@ import { docx, Toast } from "@dolphin/lark";
 import { generatePublicUrl, makePublicUrlEffective } from "@dolphin/lark/image";
 import { isDefined, stringify } from "@dolphin/common";
 
-enum TranslationKey {
+const enum TranslationKey {
   FAILED_TO_COPY_IMAGES = "failed_to_copy_images",
   UNKNOWN_ERROR = "unknown_error",
   CONTENT_LOADING = "content_loading",
@@ -14,7 +14,7 @@ i18next.init({
   lng: docx.language,
   resources: {
     en: {
-      translations: {
+      translation: {
         [TranslationKey.FAILED_TO_COPY_IMAGES]: "Failed to copy images",
         [TranslationKey.UNKNOWN_ERROR]: "Unknown error during download",
         [TranslationKey.CONTENT_LOADING]:
@@ -24,7 +24,7 @@ i18next.init({
       },
     },
     zh: {
-      translations: {
+      translation: {
         [TranslationKey.FAILED_TO_COPY_IMAGES]: "复制图片失败",
         [TranslationKey.UNKNOWN_ERROR]: "下载过程中出现未知错误",
         [TranslationKey.CONTENT_LOADING]:

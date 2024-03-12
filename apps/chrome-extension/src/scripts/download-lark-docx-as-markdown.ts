@@ -4,7 +4,7 @@ import { stringify } from "@dolphin/common";
 import { fileSave } from "browser-fs-access";
 import { fs } from "@zip.js/zip.js";
 
-enum TranslationKey {
+const enum TranslationKey {
   CONTENT_LOADING = "content_loading",
   UNKNOWN_ERROR = "unknown_error",
   NOT_SUPPORT = "not_support",
@@ -20,33 +20,31 @@ enum ToastKey {
 i18next.init({
   lng: docx.language,
   resources: {
-    resources: {
-      en: {
-        translation: {
-          [TranslationKey.CONTENT_LOADING]:
-            "Part of the content is still loading and cannot be downloaded at the moment. Please wait for loading to complete and retry",
-          [TranslationKey.UNKNOWN_ERROR]: "Unknown error during download",
-          [TranslationKey.NOT_SUPPORT]:
-            "This is not a lark document page and cannot be downloaded as Markdown",
-          [TranslationKey.DOWNLOADING_IMAGES]:
-            "Download images progress: {{progress}}% (please do not refresh or close the page)",
-          [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "Download images complete",
-          [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]:
-            "Failed to download image {{name}}",
-        },
+    en: {
+      translation: {
+        [TranslationKey.CONTENT_LOADING]:
+          "Part of the content is still loading and cannot be downloaded at the moment. Please wait for loading to complete and retry",
+        [TranslationKey.UNKNOWN_ERROR]: "Unknown error during download",
+        [TranslationKey.NOT_SUPPORT]:
+          "This is not a lark document page and cannot be downloaded as Markdown",
+        [TranslationKey.DOWNLOADING_IMAGES]:
+          "Download images progress: {{progress}}% (please do not refresh or close the page)",
+        [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "Download images complete",
+        [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]:
+          "Failed to download image {{name}}",
       },
-      zh: {
-        translation: {
-          [TranslationKey.CONTENT_LOADING]:
-            "部分内容仍在加载中，暂时无法下载。请等待加载完成后重试",
-          [TranslationKey.UNKNOWN_ERROR]: "下载过程中出现未知错误",
-          [TranslationKey.NOT_SUPPORT]:
-            "这不是一个飞书文档页面，无法下载为 Markdown",
-          [TranslationKey.DOWNLOADING_IMAGES]:
-            "下载图片进度：{{progress}}%（请不要刷新或关闭页面）",
-          [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "下载图片完成",
-          [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]: "下载图片 {{name}} 失败",
-        },
+    },
+    zh: {
+      translation: {
+        [TranslationKey.CONTENT_LOADING]:
+          "部分内容仍在加载中，暂时无法下载。请等待加载完成后重试",
+        [TranslationKey.UNKNOWN_ERROR]: "下载过程中出现未知错误",
+        [TranslationKey.NOT_SUPPORT]:
+          "这不是一个飞书文档页面，无法下载为 Markdown",
+        [TranslationKey.DOWNLOADING_IMAGES]:
+          "下载图片进度：{{progress}}%（请不要刷新或关闭页面）",
+        [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "下载图片完成",
+        [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]: "下载图片 {{name}} 失败",
       },
     },
   },
@@ -189,6 +187,10 @@ const main = async () => {
   await fileSave(toBlob(), {
     fileName: `${documentTitle}${ext}`,
     extensions: [ext],
+  }).catch((error: DOMException | TypeError) => {
+    if (error.name !== "AbortError") {
+      Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) });
+    }
   });
 };
 
