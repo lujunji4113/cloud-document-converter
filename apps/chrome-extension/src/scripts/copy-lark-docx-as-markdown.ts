@@ -6,6 +6,8 @@ import { isDefined, stringify } from "@dolphin/common";
 enum TranslationKey {
   FAILED_TO_COPY_IMAGES = "failed_to_copy_images",
   UNKNOWN_ERROR = "unknown_error",
+  CONTENT_LOADING = "content_loading",
+  NOT_SUPPORT = "not_support",
 }
 
 i18next.init({
@@ -15,18 +17,40 @@ i18next.init({
       translations: {
         [TranslationKey.FAILED_TO_COPY_IMAGES]: "Failed to copy images",
         [TranslationKey.UNKNOWN_ERROR]: "Unknown error during download",
+        [TranslationKey.CONTENT_LOADING]:
+          "Part of the content is still loading and cannot be copied at the moment. Please wait for loading to complete and retry",
+        [TranslationKey.NOT_SUPPORT]:
+          "This is not a lark document page and cannot be copied as Markdown",
       },
     },
     zh: {
       translations: {
         [TranslationKey.FAILED_TO_COPY_IMAGES]: "复制图片失败",
         [TranslationKey.UNKNOWN_ERROR]: "下载过程中出现未知错误",
+        [TranslationKey.CONTENT_LOADING]:
+          "部分内容仍在加载中，暂时无法复制。请等待加载完成后重试",
+        [TranslationKey.NOT_SUPPORT]:
+          "这不是一个飞书文档页面，无法复制为 Markdown",
       },
     },
   },
 });
 
 const main = async () => {
+  if (!docx.rootBlock) {
+    Toast.warning({ content: i18next.t(TranslationKey.NOT_SUPPORT) });
+
+    return;
+  }
+
+  if (!docx.isReady()) {
+    Toast.warning({
+      content: i18next.t(TranslationKey.CONTENT_LOADING),
+    });
+
+    return;
+  }
+
   const { root, images } = docx.intoMarkdownAST();
 
   const tokens = images
