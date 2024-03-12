@@ -1012,7 +1012,7 @@ describe("transformer.transform()", () => {
             type: BlockType.ORDERED,
             snapshot: {
               type: BlockType.ORDERED,
-              seq: "3",
+              seq: "auto",
             },
             zoneState: {
               allText: "",
@@ -1020,6 +1020,44 @@ describe("transformer.transform()", () => {
                 ops: [
                   {
                     insert: "two",
+                    attributes: {},
+                  },
+                ],
+              },
+            },
+            children: [],
+          },
+          {
+            type: BlockType.ORDERED,
+            snapshot: {
+              type: BlockType.ORDERED,
+              seq: "1",
+            },
+            zoneState: {
+              allText: "",
+              content: {
+                ops: [
+                  {
+                    insert: "one",
+                    attributes: {},
+                  },
+                ],
+              },
+            },
+            children: [],
+          },
+          {
+            type: BlockType.ORDERED,
+            snapshot: {
+              type: BlockType.ORDERED,
+              seq: "2",
+            },
+            zoneState: {
+              allText: "",
+              content: {
+                ops: [
+                  {
+                    insert: "one",
                     attributes: {},
                   },
                 ],
@@ -1108,7 +1146,7 @@ describe("transformer.transform()", () => {
               {
                 type: "listItem",
                 data: {
-                  seq: 3,
+                  seq: "auto",
                 },
                 children: [
                   {
@@ -1117,6 +1155,47 @@ describe("transformer.transform()", () => {
                       {
                         type: "text",
                         value: "two",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "list",
+            ordered: true,
+            start: 1,
+            children: [
+              {
+                type: "listItem",
+                data: {
+                  seq: 1,
+                },
+                children: [
+                  {
+                    type: "paragraph",
+                    children: [
+                      {
+                        type: "text",
+                        value: "one",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "listItem",
+                data: {
+                  seq: 2,
+                },
+                children: [
+                  {
+                    type: "paragraph",
+                    children: [
+                      {
+                        type: "text",
+                        value: "one",
                       },
                     ],
                   },

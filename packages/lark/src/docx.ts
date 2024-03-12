@@ -19,7 +19,7 @@ declare module "mdast" {
   }
 
   interface ListItemData {
-    seq?: number;
+    seq?: number | "auto";
   }
 }
 
@@ -264,17 +264,49 @@ export const mergeListItems = <T extends mdast.Nodes>(nodes: T[]) =>
         return BlockType.TODO;
       }
 
-      if (typeof listItem.data?.seq === "number") {
+      if (
+        typeof listItem.data?.seq === "number" ||
+        listItem.data?.seq === "auto"
+      ) {
         return BlockType.ORDERED;
       }
 
       return BlockType.BULLET;
     };
 
+    const isEqualOrderedListItem = (
+      node: mdast.ListItem,
+      other: mdast.ListItem
+    ) => {
+      const seq = node.data?.seq;
+      const otherSeq = other.data?.seq;
+
+      if (!seq || !otherSeq) return false;
+
+      if (seq === "auto") {
+        return otherSeq === "auto";
+      }
+
+      return otherSeq === "auto" || seq + 1 === otherSeq;
+    };
+
+    const isEqualListItem = (node: mdast.ListItem, other: mdast.ListItem) => {
+      const type = listItemType(node);
+      const otherType = listItemType(other);
+
+      if (type === otherType) {
+        return type === BlockType.ORDERED
+          ? isEqualOrderedListItem(node, other)
+          : true;
+      }
+
+      return false;
+    };
+
     return (
       current.type === "listItem" &&
       next.type === "listItem" &&
-      listItemType(current) === listItemType(next)
+      isEqualListItem(current, next)
     );
   }).map((nodes) => {
     const node = nodes[0];
@@ -576,7 +608,9 @@ class Transformer {
           ...(block.type === BlockType.ORDERED
             ? {
                 data: {
-                  seq: Number(block.snapshot.seq),
+                  seq: /[0-9]+/.test(block.snapshot.seq)
+                    ? Number(block.snapshot.seq)
+                    : "auto",
                 },
               }
             : null),
