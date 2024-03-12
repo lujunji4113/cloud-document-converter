@@ -153,9 +153,10 @@ const main = async () => {
 
             try {
               const imageFileName = uniqueFileName(name);
+              const imageFilePath = `images/${imageFileName}`;
               const response = await fetch(blobUrl);
-              zipFs.addBlob(imageFileName, await response.blob());
-              image.url = imageFileName;
+              zipFs.addBlob(imageFilePath, await response.blob());
+              image.url = imageFilePath;
             } catch {
               Toast.error({
                 content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {
