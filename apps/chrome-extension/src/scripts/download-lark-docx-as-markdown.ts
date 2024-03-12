@@ -52,6 +52,32 @@ i18next.init({
   },
 });
 
+const usedNames: Set<string> = new Set();
+const fileNameToPreId: Map<string, number> = new Map();
+const uniqueFileName = (originFileName: string) => {
+  if (usedNames.has(originFileName)) {
+    const startDotIndex = originFileName.lastIndexOf(".");
+
+    const preId = fileNameToPreId.get(originFileName) ?? 0;
+    const id = preId + 1;
+    fileNameToPreId.set(originFileName, id);
+
+    const fileName =
+      startDotIndex === -1
+        ? originFileName.concat(`-${id}`)
+        : originFileName
+            .slice(0, startDotIndex)
+            .concat(`-${id}`)
+            .concat(originFileName.slice(startDotIndex));
+
+    return fileName;
+  }
+
+  usedNames.add(originFileName);
+
+  return originFileName;
+};
+
 const main = async () => {
   if (!docx.rootBlock) {
     Toast.warning({ content: i18next.t(TranslationKey.NOT_SUPPORT) });
@@ -126,7 +152,7 @@ const main = async () => {
             }
 
             try {
-              const imageFileName = `${index}-${name}`;
+              const imageFileName = uniqueFileName(name);
               const response = await fetch(blobUrl);
               zipFs.addBlob(imageFileName, await response.blob());
               image.url = imageFileName;
