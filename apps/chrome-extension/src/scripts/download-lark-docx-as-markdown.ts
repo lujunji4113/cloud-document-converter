@@ -10,12 +10,13 @@ const enum TranslationKey {
   UNKNOWN_ERROR = "unknown_error",
   NOT_SUPPORT = "not_support",
   DOWNLOADING_IMAGES = "downloading_images",
-  DOWNLOAD_IMAGES_COMPLETE = "download_images_complete",
   FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image",
+  DOWNLOAD_COMPLETE = "download_complete",
+  STILL_DOWNLOADING = "still_downloading",
 }
 
 enum ToastKey {
-  DOWNLOADING_IMAGES = "downloading_images",
+  DOWNLOADING = "downloading",
 }
 
 i18next.init({
@@ -30,9 +31,11 @@ i18next.init({
           "This is not a lark document page and cannot be downloaded as Markdown",
         [TranslationKey.DOWNLOADING_IMAGES]:
           "Download images progress: {{progress}}% (please do not refresh or close the page)",
-        [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "Download images complete",
         [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]:
           "Failed to download image {{name}}",
+        [TranslationKey.STILL_DOWNLOADING]:
+          "Still downloading (please do not refresh or close the page)",
+        [TranslationKey.DOWNLOAD_COMPLETE]: "Download complete",
       },
     },
     zh: {
@@ -44,8 +47,10 @@ i18next.init({
           "这不是一个飞书文档页面，无法下载为 Markdown",
         [TranslationKey.DOWNLOADING_IMAGES]:
           "下载图片进度：{{progress}}%（请不要刷新或关闭页面）",
-        [TranslationKey.DOWNLOAD_IMAGES_COMPLETE]: "下载图片完成",
         [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]: "下载图片 {{name}} 失败",
+        [TranslationKey.STILL_DOWNLOADING]:
+          "仍在下载中（请不要刷新或关闭页面）",
+        [TranslationKey.DOWNLOAD_COMPLETE]: "下载完成",
       },
     },
   },
@@ -103,40 +108,29 @@ const main = async () => {
     let blob: Blob;
 
     let allItemsCount = images.length + 1;
-    let downloadedItemsCount = 0;
 
-    const updateLoading = () => {
-      downloadedItemsCount++;
+    const updateLoading = (content: string) => {
       Toast.loading({
-        content: i18next.t(TranslationKey.DOWNLOADING_IMAGES, {
-          progress: Math.floor((downloadedItemsCount / allItemsCount) * 100),
-        }),
+        content,
         keepAlive: true,
-        key: ToastKey.DOWNLOADING_IMAGES,
+        key: ToastKey.DOWNLOADING,
       });
-    };
-
-    const closeLoading = () => {
-      Toast.remove(ToastKey.DOWNLOADING_IMAGES);
     };
 
     if (!hasImages) {
       const markdown = stringify(root);
 
-      updateLoading();
-
       blob = new Blob([markdown]);
     } else {
       let zipFs = new fs.FS();
 
-      Toast.loading({
-        content: i18next.t(TranslationKey.DOWNLOADING_IMAGES, {
+      updateLoading(
+        i18next.t(TranslationKey.DOWNLOADING_IMAGES, {
           progress: "0",
-        }),
-        keepAlive: true,
-        key: ToastKey.DOWNLOADING_IMAGES,
-      });
+        })
+      );
 
+      let downloadedItemsCount = 0;
       await Promise.allSettled(
         images.map(async (image) => {
           if (image.data) {
@@ -167,15 +161,17 @@ const main = async () => {
             }
           }
 
-          updateLoading();
+          updateLoading(
+            i18next.t(TranslationKey.DOWNLOADING_IMAGES, {
+              progress: Math.floor(
+                (downloadedItemsCount++ / allItemsCount) * 100
+              ),
+            })
+          );
         })
       );
 
-      closeLoading();
-
-      Toast.success({
-        content: i18next.t(TranslationKey.DOWNLOAD_IMAGES_COMPLETE),
-      });
+      updateLoading(i18next.t(TranslationKey.STILL_DOWNLOADING));
 
       const markdown = stringify(root);
 
@@ -184,21 +180,27 @@ const main = async () => {
       blob = await zipFs.exportBlob();
     }
 
+    Toast.remove(ToastKey.DOWNLOADING);
+
+    Toast.success({
+      content: i18next.t(TranslationKey.DOWNLOAD_COMPLETE),
+    });
+
     return blob;
   };
 
   await fileSave(toBlob(), {
     fileName: `${recommendName}${ext}`,
     extensions: [ext],
-  }).catch((error: DOMException | TypeError) => {
-    if (error.name !== "AbortError") {
-      Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) });
-    }
   });
 };
 
-main().catch(() => {
-  Toast.remove("downloading");
-
-  Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) });
-});
+main()
+  .catch((error: DOMException | TypeError) => {
+    if (error.name !== "AbortError") {
+      Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) });
+    }
+  })
+  .finally(() => {
+    Toast.remove(ToastKey.DOWNLOADING);
+  });
