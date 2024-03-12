@@ -3,6 +3,7 @@ import { Toast, docx } from "@dolphin/lark";
 import { stringify } from "@dolphin/common";
 import { fileSave } from "browser-fs-access";
 import { fs } from "@zip.js/zip.js";
+import normalizeFileName from "filenamify/browser";
 
 const enum TranslationKey {
   CONTENT_LOADING = "content_loading",
@@ -92,7 +93,9 @@ const main = async () => {
   }
 
   let { root, images } = docx.intoMarkdownAST();
-  const documentTitle = "doc";
+  const recommendName = normalizeFileName(
+    docx.pageTitle ? normalizeFileName(docx.pageTitle.slice(0, 100)) : "doc"
+  );
   const hasImages = images.length > 0;
   const ext = hasImages ? ".zip" : ".md";
 
@@ -135,7 +138,7 @@ const main = async () => {
       });
 
       await Promise.allSettled(
-        images.map(async (image, index) => {
+        images.map(async (image) => {
           if (image.data) {
             const { name, fetchSources } = image.data;
             let blobUrl = (await fetchSources())?.src;
@@ -176,7 +179,7 @@ const main = async () => {
 
       const markdown = stringify(root);
 
-      zipFs.addText(`${documentTitle}.md`, markdown);
+      zipFs.addText(`${recommendName}.md`, markdown);
 
       blob = await zipFs.exportBlob();
     }
@@ -185,7 +188,7 @@ const main = async () => {
   };
 
   await fileSave(toBlob(), {
-    fileName: `${documentTitle}${ext}`,
+    fileName: `${recommendName}${ext}`,
     extensions: [ext],
   }).catch((error: DOMException | TypeError) => {
     if (error.name !== "AbortError") {

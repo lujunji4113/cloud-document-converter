@@ -689,6 +689,12 @@ export class Docx {
     return User?.language === "zh" ? "zh" : "en";
   }
 
+  get pageTitle() {
+    if (!this.rootBlock || !this.rootBlock.zoneState) return null;
+
+    return this.rootBlock.zoneState.allText.slice(0, -1);
+  }
+
   isReady() {
     return (
       !!this.rootBlock &&
