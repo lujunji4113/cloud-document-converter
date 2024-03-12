@@ -68,13 +68,6 @@ const main = async () => {
     })
     .filter(isDefined);
 
-  const isSuccess = await makePublicUrlEffective(Object.fromEntries(tokens));
-  if (!isSuccess) {
-    Toast.error({
-      content: i18next.t(TranslationKey.FAILED_TO_COPY_IMAGES),
-    });
-  }
-
   const markdown = stringify(root);
 
   navigator.clipboard.write([
@@ -82,6 +75,13 @@ const main = async () => {
       "text/plain": new Blob([markdown], { type: "text/plain" }),
     }),
   ]);
+
+  const isSuccess = await makePublicUrlEffective(Object.fromEntries(tokens));
+  if (!isSuccess) {
+    Toast.error({
+      content: i18next.t(TranslationKey.FAILED_TO_COPY_IMAGES),
+    });
+  }
 };
 
 main().catch(() => {
