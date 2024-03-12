@@ -23,7 +23,8 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rollup -c",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "test": "vitest"
   },
   "devDependencies": {
     "@dolphin/rollup-config": "workspace:^",
