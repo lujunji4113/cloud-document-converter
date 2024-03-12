@@ -233,124 +233,113 @@ type Blocks =
   | TableCellBlock
   | NotSupportedBlock;
 
-const mergeNodes = <T extends mdast.Nodes>(
-  nodes: T[],
-  isEqual: (a: T, b: T) => boolean,
-  merge: (nodes: T[], next: (nodes: T[]) => T[]) => T
-): T[] => {
-  let mergedNodes: mdast.Nodes[] = [];
+const chunkBy = <T>(
+  items: T[],
+  isEqual: (current: T, next: T) => boolean
+): T[][] => {
+  let chunks: T[][] = [];
   let index = 0;
-  while (index < nodes.length) {
+
+  while (index < items.length) {
     let nextIndex = index + 1;
     while (
-      nextIndex < nodes.length &&
-      isEqual(nodes[index], nodes[nextIndex])
+      nextIndex < items.length &&
+      isEqual(items[index], items[nextIndex])
     ) {
       nextIndex++;
     }
 
-    const equalNodes = nodes.slice(index, nextIndex);
-    if (equalNodes.length > 1) {
-      const mergedNode = merge(equalNodes, (nodes) =>
-        mergeNodes(nodes, isEqual, merge)
-      );
-      mergedNodes.push(mergedNode);
-    } else {
-      mergedNodes.push(...equalNodes);
-    }
+    chunks.push(items.slice(index, nextIndex));
 
     index = nextIndex;
   }
 
-  return mergedNodes as T[];
+  return chunks;
 };
 
-const mergeListItems = <T extends mdast.Nodes>(nodes: T[]) =>
-  mergeNodes(
-    nodes,
-    (node, nextNode) => {
-      const listItemType = (listItem: mdast.ListItem) => {
-        if (typeof listItem.checked === "boolean") {
-          return BlockType.TODO;
-        }
+export const mergeListItems = <T extends mdast.Nodes>(nodes: T[]) =>
+  chunkBy(nodes, (current, next) => {
+    const listItemType = (listItem: mdast.ListItem) => {
+      if (typeof listItem.checked === "boolean") {
+        return BlockType.TODO;
+      }
 
-        if (typeof listItem.data?.seq === "number") {
-          return BlockType.ORDERED;
-        }
+      if (typeof listItem.data?.seq === "number") {
+        return BlockType.ORDERED;
+      }
 
-        return BlockType.BULLET;
-      };
+      return BlockType.BULLET;
+    };
 
-      return (
-        node.type === "listItem" &&
-        nextNode.type === "listItem" &&
-        listItemType(node) === listItemType(nextNode)
-      );
-    },
-    (nodes) => {
-      const fistNode = nodes[0] as mdast.ListItem;
+    return (
+      current.type === "listItem" &&
+      next.type === "listItem" &&
+      listItemType(current) === listItemType(next)
+    );
+  }).map((nodes) => {
+    const node = nodes[0];
+
+    if (node.type === "listItem") {
       const list: mdast.List = {
         type: "list",
-        ...(typeof fistNode.data?.seq === "number"
+        ...(typeof node.data?.seq === "number"
           ? {
               ordered: true,
-              start: fistNode.data.seq,
+              start: node.data.seq,
             }
           : null),
         children: nodes as mdast.ListItem[],
       };
-      return list as T;
+      return list;
     }
-  );
 
-const mergePhrasingContents = (nodes: mdast.PhrasingContent[]) =>
-  mergeNodes(
-    nodes,
-    (node, nextNode) => {
-      if (node.type === "link" && nextNode.type === "link") {
-        return node.url === nextNode.url;
-      }
+    return node;
+  });
 
-      if (
-        node.type === "emphasis" ||
-        node.type === "strong" ||
-        node.type === "delete" ||
-        node.type === "text" ||
-        node.type === "inlineCode"
-      ) {
-        return node.type === nextNode.type;
-      }
-
-      return false;
-    },
-    (nodes, next) => {
-      const node = nodes.reduce((pre, cur) => {
-        if ("children" in pre && "children" in cur) {
-          return {
-            ...pre,
-            ...cur,
-            children: pre.children.concat(cur.children),
-          };
-        }
-
-        if ("value" in pre && "value" in cur) {
-          return {
-            ...pre,
-            ...cur,
-            value: pre.value.concat(cur.value),
-          };
-        }
-
-        return pre;
-      });
-
-      if ("children" in node) {
-        node.children = next(node.children);
-      }
-
-      return node;
+export const mergePhrasingContents = (nodes: mdast.PhrasingContent[]) =>
+  chunkBy(nodes, (current, next) => {
+    if (current.type === "link" && next.type === "link") {
+      return current.url === next.url;
     }
-  );
+
+    if (
+      current.type === "emphasis" ||
+      current.type === "strong" ||
+      current.type === "delete" ||
+      current.type === "text" ||
+      current.type === "inlineCode"
+    ) {
+      return current.type === next.type;
+    }
+
+    return false;
+  }).map((nodes) => {
+    const node = nodes.reduce((pre, cur) => {
+      if ("children" in pre && "children" in cur) {
+        return {
+          ...pre,
+          ...cur,
+          children: pre.children.concat(cur.children),
+        };
+      }
+
+      if ("value" in pre && "value" in cur) {
+        return {
+          ...pre,
+          ...cur,
+          value: pre.value.concat(cur.value),
+        };
+      }
+
+      return pre;
+    });
+
+    if ("children" in node) {
+      node.children = mergePhrasingContents(node.children);
+    }
+
+    return node;
+  });
 
 export const transformOperationsToPhrasingContents = (
   ops: Operation[]
@@ -526,7 +515,7 @@ class Transformer {
             type: "root",
             children: [],
           }),
-          (nodes) => mergeListItems(nodes.filter(isRootContent))
+          (nodes) => mergeListItems(nodes).filter(isRootContent)
         );
       }
       case BlockType.DIVIDER: {
@@ -553,7 +542,7 @@ class Transformer {
       case BlockType.CODE: {
         const code: mdast.Code = {
           type: "code",
-          lang: block.language,
+          lang: block.language.toLocaleLowerCase(),
           value: block.zoneState?.allText.slice(0, -1) ?? "",
         };
         return code;
@@ -565,7 +554,7 @@ class Transformer {
             type: "blockquote",
             children: [],
           }),
-          (nodes) => mergeListItems(nodes.filter(isBlockquoteContent))
+          (nodes) => mergeListItems(nodes).filter(isBlockquoteContent)
         );
       }
       case BlockType.BULLET:
@@ -573,7 +562,6 @@ class Transformer {
       case BlockType.TODO: {
         const listItem: mdast.ListItem = {
           type: "listItem",
-          spread: false,
           children: [
             {
               type: "paragraph",
@@ -674,7 +662,7 @@ class Transformer {
   }
 }
 
-const transformer = new Transformer();
+export const transformer = new Transformer();
 
 export class Docx {
   get rootBlock() {
