@@ -76,11 +76,13 @@ const main = async () => {
     }),
   ]);
 
-  const isSuccess = await makePublicUrlEffective(Object.fromEntries(tokens));
-  if (!isSuccess) {
-    Toast.error({
-      content: i18next.t(TranslationKey.FAILED_TO_COPY_IMAGES),
-    });
+  if (tokens.length > 0) {
+    const isSuccess = await makePublicUrlEffective(Object.fromEntries(tokens));
+    if (!isSuccess) {
+      Toast.error({
+        content: i18next.t(TranslationKey.FAILED_TO_COPY_IMAGES),
+      });
+    }
   }
 };
 
