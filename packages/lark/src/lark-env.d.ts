@@ -1,12 +1,12 @@
 interface Window {
-  PageMain?: import("./env").PageMain;
-  Toast?: import("./env").Toast;
-  User?: import("./env").User;
-  docsLocation?: Location;
+  PageMain?: import('./env').PageMain
+  Toast?: import('./env').Toast
+  User?: import('./env').User
+  docsLocation?: Location
   local?: {
-    apiHost?: string;
-  };
+    apiHost?: string
+  }
   globalConfig: {
-    space_api: string[];
-  };
+    space_api: string[]
+  }
 }

@@ -1,9 +1,9 @@
 /// <reference types="vitest" />
 
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   test: {
-    environment: "happy-dom",
+    environment: 'happy-dom',
   },
-});
+})

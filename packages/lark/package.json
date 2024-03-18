@@ -26,8 +26,8 @@
     "check": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint src/**",
-    "format": "prettier . --write --ignore-path ../../.gitignore",
-    "format-check": "prettier . --check --ignore-path ../../.gitignore"
+    "format": "prettier . --write --ignore-path ../../.gitignore --ignore-path ./.prettierignore",
+    "format-check": "prettier . --check --ignore-path ../../.gitignore --ignore-path ./.prettierignore"
   },
   "devDependencies": {
     "@dolphin/eslint-config": "workspace:^",

@@ -1,74 +1,74 @@
-import { test, describe, expect } from "vitest";
-import * as mdast from "mdast";
+import { test, describe, expect } from 'vitest'
+import * as mdast from 'mdast'
 import {
   BlockType,
   mergeListItems,
   mergePhrasingContents,
   transformOperationsToPhrasingContents,
   transformer,
-} from "../src/docx";
+} from '../src/docx'
 
-describe("mergeListItems()", () => {
-  test("simple example", () => {
+describe('mergeListItems()', () => {
+  test('simple example', () => {
     const result = mergeListItems([
       {
-        type: "blockquote",
+        type: 'blockquote',
         children: [],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         children: [],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         data: {
           seq: 1,
         },
         children: [],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         checked: true,
         children: [],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         checked: false,
         children: [],
       },
       {
-        type: "blockquote",
+        type: 'blockquote',
         children: [],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         data: {
           seq: 2,
         },
         children: [],
       },
-    ]);
+    ])
     const expectedResult: mdast.Nodes[] = [
       {
-        type: "blockquote",
+        type: 'blockquote',
         children: [],
       },
       {
-        type: "list",
+        type: 'list',
         children: [
           {
-            type: "listItem",
+            type: 'listItem',
             children: [],
           },
         ],
       },
       {
-        type: "list",
+        type: 'list',
         ordered: true,
         start: 1,
         children: [
           {
-            type: "listItem",
+            type: 'listItem',
             data: {
               seq: 1,
             },
@@ -77,31 +77,31 @@ describe("mergeListItems()", () => {
         ],
       },
       {
-        type: "list",
+        type: 'list',
         children: [
           {
-            type: "listItem",
+            type: 'listItem',
             checked: true,
             children: [],
           },
           {
-            type: "listItem",
+            type: 'listItem',
             checked: false,
             children: [],
           },
         ],
       },
       {
-        type: "blockquote",
+        type: 'blockquote',
         children: [],
       },
       {
-        type: "list",
+        type: 'list',
         ordered: true,
         start: 2,
         children: [
           {
-            type: "listItem",
+            type: 'listItem',
             data: {
               seq: 2,
             },
@@ -109,49 +109,49 @@ describe("mergeListItems()", () => {
           },
         ],
       },
-    ];
-    expect(result).toStrictEqual(expectedResult);
-  });
-});
+    ]
+    expect(result).toStrictEqual(expectedResult)
+  })
+})
 
-describe("mergePhrasingContents()", () => {
-  test("simple example", () => {
+describe('mergePhrasingContents()', () => {
+  test('simple example', () => {
     const result = mergePhrasingContents([
       {
-        type: "strong",
+        type: 'strong',
         children: [],
       },
       {
-        type: "emphasis",
+        type: 'emphasis',
         children: [
           {
-            type: "text",
-            value: "a",
+            type: 'text',
+            value: 'a',
           },
         ],
       },
       {
-        type: "emphasis",
+        type: 'emphasis',
         children: [
           {
-            type: "text",
-            value: "b",
+            type: 'text',
+            value: 'b',
           },
         ],
       },
       {
-        type: "link",
-        url: "https://www.baidu.com",
+        type: 'link',
+        url: 'https://www.baidu.com',
         children: [
           {
-            type: "delete",
+            type: 'delete',
             children: [
               {
-                type: "strong",
+                type: 'strong',
                 children: [
                   {
-                    type: "text",
-                    value: "a",
+                    type: 'text',
+                    value: 'a',
                   },
                 ],
               },
@@ -160,523 +160,523 @@ describe("mergePhrasingContents()", () => {
         ],
       },
       {
-        type: "link",
-        url: "https://www.baidu.com",
+        type: 'link',
+        url: 'https://www.baidu.com',
         children: [
           {
-            type: "strong",
+            type: 'strong',
             children: [
               {
-                type: "text",
-                value: "a",
+                type: 'text',
+                value: 'a',
               },
             ],
           },
         ],
       },
-    ]);
+    ])
     const expectedResult: mdast.PhrasingContent[] = [
       {
-        type: "strong",
+        type: 'strong',
         children: [],
       },
       {
-        type: "emphasis",
+        type: 'emphasis',
         children: [
           {
-            type: "text",
-            value: "ab",
+            type: 'text',
+            value: 'ab',
           },
         ],
       },
       {
-        type: "link",
-        url: "https://www.baidu.com",
+        type: 'link',
+        url: 'https://www.baidu.com',
         children: [
           {
-            type: "delete",
+            type: 'delete',
             children: [
               {
-                type: "strong",
+                type: 'strong',
                 children: [
                   {
-                    type: "text",
-                    value: "a",
+                    type: 'text',
+                    value: 'a',
                   },
                 ],
               },
             ],
           },
           {
-            type: "strong",
+            type: 'strong',
             children: [
               {
-                type: "text",
-                value: "a",
+                type: 'text',
+                value: 'a',
               },
             ],
           },
         ],
       },
-    ];
-    expect(result).toStrictEqual(expectedResult);
-  });
-});
+    ]
+    expect(result).toStrictEqual(expectedResult)
+  })
+})
 
-describe("transformOperationsToPhrasingContents()", () => {
-  describe("code span", () => {
-    test("simple code span", () => {
+describe('transformOperationsToPhrasingContents()', () => {
+  describe('code span', () => {
+    test('simple code span', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
-            insert: "code",
+            insert: 'code',
             attributes: {
-              inlineCode: "true",
-              author: "7096007617544896513",
+              inlineCode: 'true',
+              author: '7096007617544896513',
             },
           },
           {
-            insert: "\n",
+            insert: '\n',
             attributes: {
-              fixEnter: "true",
+              fixEnter: 'true',
             },
           },
-        ])
-      ).toStrictEqual([{ type: "inlineCode", value: "code" }]);
-    });
+        ]),
+      ).toStrictEqual([{ type: 'inlineCode', value: 'code' }])
+    })
 
-    test("code span in strong emphasis", () => {
+    test('code span in strong emphasis', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
-            insert: "a",
+            insert: 'a',
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
           },
           {
-            insert: "b",
+            insert: 'b',
             attributes: {
-              bold: "true",
-              inlineCode: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              inlineCode: 'true',
+              author: '7096007617544896513',
             },
           },
           {
-            insert: "c",
+            insert: 'c',
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
           },
           {
-            insert: "\n",
+            insert: '\n',
             attributes: {
-              fixEnter: "true",
+              fixEnter: 'true',
             },
           },
-        ])
+        ]),
       ).toStrictEqual([
         {
-          type: "strong",
+          type: 'strong',
           children: [
-            { type: "text", value: "a" },
-            { type: "inlineCode", value: "b" },
-            { type: "text", value: "c" },
+            { type: 'text', value: 'a' },
+            { type: 'inlineCode', value: 'b' },
+            { type: 'text', value: 'c' },
           ],
         },
-      ]);
-    });
+      ])
+    })
 
-    test("code span range intersect strong emphasis range", () => {
+    test('code span range intersect strong emphasis range', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
-            insert: "a",
+            insert: 'a',
           },
           {
-            insert: "b",
+            insert: 'b',
             attributes: {
-              inlineCode: "true",
-              bold: "true",
-              author: "7096007617544896513",
-            },
-          },
-          {
-            insert: "c",
-            attributes: {
-              inlineCode: "true",
-              author: "7096007617544896513",
+              inlineCode: 'true',
+              bold: 'true',
+              author: '7096007617544896513',
             },
           },
           {
-            insert: "\n",
+            insert: 'c',
             attributes: {
-              fixEnter: "true",
+              inlineCode: 'true',
+              author: '7096007617544896513',
             },
           },
-        ])
+          {
+            insert: '\n',
+            attributes: {
+              fixEnter: 'true',
+            },
+          },
+        ]),
       ).toStrictEqual([
         {
-          type: "strong",
+          type: 'strong',
           children: [
             {
-              type: "text",
-              value: "a",
+              type: 'text',
+              value: 'a',
             },
             {
-              type: "inlineCode",
-              value: "b",
-            },
-          ],
-        },
-        {
-          type: "inlineCode",
-          value: "c",
-        },
-      ]);
-    });
-  });
-
-  describe("emphasis and strong emphasis", () => {
-    test("simple emphasis", () => {
-      expect(
-        transformOperationsToPhrasingContents([
-          {
-            insert: "emphasis",
-            attributes: {
-              italic: "true",
-              author: "7096007617544896513",
-            },
-          },
-          {
-            insert: "\n",
-            attributes: {
-              fixEnter: "true",
-            },
-          },
-        ])
-      ).toStrictEqual([
-        {
-          type: "emphasis",
-          children: [{ type: "text", value: "emphasis" }],
-        },
-      ]);
-    });
-
-    test("simple strong emphasis", () => {
-      expect(
-        transformOperationsToPhrasingContents([
-          {
-            insert: "strong emphasis",
-            attributes: {
-              bold: "true",
-              author: "7096007617544896513",
-            },
-          },
-          {
-            insert: "\n",
-            attributes: {
-              fixEnter: "true",
-            },
-          },
-        ])
-      ).toStrictEqual([
-        {
-          type: "strong",
-          children: [{ type: "text", value: "strong emphasis" }],
-        },
-      ]);
-    });
-
-    test("emphasis in strong emphasis", () => {
-      expect(
-        transformOperationsToPhrasingContents([
-          {
-            attributes: {
-              bold: "true",
-              author: "7096007617544896513",
-            },
-            insert: "a",
-          },
-          {
-            insert: "b",
-            attributes: {
-              italic: "true",
-              bold: "true",
-              author: "7096007617544896513",
-            },
-          },
-          {
-            attributes: {
-              bold: "true",
-              author: "7096007617544896513",
-            },
-            insert: "c",
-          },
-          {
-            insert: "\n",
-            attributes: {
-              fixEnter: "true",
-            },
-          },
-        ])
-      ).toStrictEqual([
-        {
-          type: "strong",
-          children: [
-            {
-              type: "text",
-              value: "a",
-            },
-            {
-              type: "emphasis",
-              children: [{ type: "text", value: "b" }],
-            },
-            {
-              type: "text",
-              value: "c",
+              type: 'inlineCode',
+              value: 'b',
             },
           ],
         },
-      ]);
-    });
+        {
+          type: 'inlineCode',
+          value: 'c',
+        },
+      ])
+    })
+  })
 
-    test("emphasis range intersect strong emphasis range", () => {
+  describe('emphasis and strong emphasis', () => {
+    test('simple emphasis', () => {
+      expect(
+        transformOperationsToPhrasingContents([
+          {
+            insert: 'emphasis',
+            attributes: {
+              italic: 'true',
+              author: '7096007617544896513',
+            },
+          },
+          {
+            insert: '\n',
+            attributes: {
+              fixEnter: 'true',
+            },
+          },
+        ]),
+      ).toStrictEqual([
+        {
+          type: 'emphasis',
+          children: [{ type: 'text', value: 'emphasis' }],
+        },
+      ])
+    })
+
+    test('simple strong emphasis', () => {
+      expect(
+        transformOperationsToPhrasingContents([
+          {
+            insert: 'strong emphasis',
+            attributes: {
+              bold: 'true',
+              author: '7096007617544896513',
+            },
+          },
+          {
+            insert: '\n',
+            attributes: {
+              fixEnter: 'true',
+            },
+          },
+        ]),
+      ).toStrictEqual([
+        {
+          type: 'strong',
+          children: [{ type: 'text', value: 'strong emphasis' }],
+        },
+      ])
+    })
+
+    test('emphasis in strong emphasis', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
-            insert: "a",
+            insert: 'a',
           },
           {
-            insert: "b",
+            insert: 'b',
             attributes: {
-              italic: "true",
-              bold: "true",
-              author: "7096007617544896513",
-            },
-          },
-          {
-            insert: "c",
-            attributes: {
-              italic: "true",
-              author: "7096007617544896513",
+              italic: 'true',
+              bold: 'true',
+              author: '7096007617544896513',
             },
           },
           {
-            insert: "\n",
             attributes: {
-              fixEnter: "true",
+              bold: 'true',
+              author: '7096007617544896513',
+            },
+            insert: 'c',
+          },
+          {
+            insert: '\n',
+            attributes: {
+              fixEnter: 'true',
             },
           },
-        ])
+        ]),
       ).toStrictEqual([
         {
-          type: "strong",
+          type: 'strong',
           children: [
-            { type: "text", value: "a" },
-            { type: "emphasis", children: [{ type: "text", value: "b" }] },
+            {
+              type: 'text',
+              value: 'a',
+            },
+            {
+              type: 'emphasis',
+              children: [{ type: 'text', value: 'b' }],
+            },
+            {
+              type: 'text',
+              value: 'c',
+            },
+          ],
+        },
+      ])
+    })
+
+    test('emphasis range intersect strong emphasis range', () => {
+      expect(
+        transformOperationsToPhrasingContents([
+          {
+            attributes: {
+              bold: 'true',
+              author: '7096007617544896513',
+            },
+            insert: 'a',
+          },
+          {
+            insert: 'b',
+            attributes: {
+              italic: 'true',
+              bold: 'true',
+              author: '7096007617544896513',
+            },
+          },
+          {
+            insert: 'c',
+            attributes: {
+              italic: 'true',
+              author: '7096007617544896513',
+            },
+          },
+          {
+            insert: '\n',
+            attributes: {
+              fixEnter: 'true',
+            },
+          },
+        ]),
+      ).toStrictEqual([
+        {
+          type: 'strong',
+          children: [
+            { type: 'text', value: 'a' },
+            { type: 'emphasis', children: [{ type: 'text', value: 'b' }] },
           ],
         },
         {
-          type: "emphasis",
+          type: 'emphasis',
           children: [
             {
-              type: "text",
-              value: "c",
+              type: 'text',
+              value: 'c',
             },
           ],
         },
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
-  describe("delete", () => {
-    test("simple delete", () => {
+  describe('delete', () => {
+    test('simple delete', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
-            insert: "a",
+            insert: 'a',
             attributes: {
-              strikethrough: "true",
-              author: "7096007617544896513",
+              strikethrough: 'true',
+              author: '7096007617544896513',
             },
           },
           {
-            insert: "\n",
+            insert: '\n',
             attributes: {
-              fixEnter: "true",
+              fixEnter: 'true',
             },
           },
-        ])
+        ]),
       ).toStrictEqual([
         {
-          type: "delete",
-          children: [{ type: "text", value: "a" }],
+          type: 'delete',
+          children: [{ type: 'text', value: 'a' }],
         },
-      ]);
-    });
+      ])
+    })
 
-    test("nesting are possible", () => {
+    test('nesting are possible', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
-            insert: "a",
+            insert: 'a',
           },
           {
             attributes: {
-              italic: "true",
-              bold: "true",
-              author: "7096007617544896513",
+              italic: 'true',
+              bold: 'true',
+              author: '7096007617544896513',
             },
-            insert: "b",
+            insert: 'b',
           },
           {
-            insert: "c",
+            insert: 'c',
             attributes: {
-              strikethrough: "true",
-              italic: "true",
-              bold: "true",
-              author: "7096007617544896513",
+              strikethrough: 'true',
+              italic: 'true',
+              bold: 'true',
+              author: '7096007617544896513',
             },
           },
           {
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
-            insert: "d",
+            insert: 'd',
           },
           {
-            insert: "\n",
+            insert: '\n',
             attributes: {
-              fixEnter: "true",
+              fixEnter: 'true',
             },
           },
-        ])
+        ]),
       ).toStrictEqual([
         {
-          type: "strong",
+          type: 'strong',
           children: [
             {
-              type: "text",
-              value: "a",
+              type: 'text',
+              value: 'a',
             },
             {
-              type: "emphasis",
+              type: 'emphasis',
               children: [
                 {
-                  type: "text",
-                  value: "b",
+                  type: 'text',
+                  value: 'b',
                 },
-                { type: "delete", children: [{ type: "text", value: "c" }] },
+                { type: 'delete', children: [{ type: 'text', value: 'c' }] },
               ],
             },
             {
-              type: "text",
-              value: "d",
+              type: 'text',
+              value: 'd',
             },
           ],
         },
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
-  describe("link", () => {
-    test("simple link", () => {
+  describe('link', () => {
+    test('simple link', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
-            insert: "a",
+            insert: 'a',
             attributes: {
-              "clientside-link-underline": "true",
-              author: "7096007617544896513",
-              link: "https%3A%2F%2Fwww.baidu.com",
+              'clientside-link-underline': 'true',
+              author: '7096007617544896513',
+              link: 'https%3A%2F%2Fwww.baidu.com',
             },
           },
           {
-            insert: "\n",
+            insert: '\n',
             attributes: {
-              fixEnter: "true",
+              fixEnter: 'true',
             },
           },
-        ])
+        ]),
       ).toStrictEqual([
         {
-          type: "link",
-          url: "https://www.baidu.com",
-          children: [{ type: "text", value: "a" }],
+          type: 'link',
+          url: 'https://www.baidu.com',
+          children: [{ type: 'text', value: 'a' }],
         },
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
-  describe("mark priority", () => {
-    test("strong > emphasis", () => {
+  describe('mark priority', () => {
+    test('strong > emphasis', () => {
       expect(
         transformOperationsToPhrasingContents([
           {
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
-            insert: "ab",
+            insert: 'ab',
           },
           {
-            insert: "c",
+            insert: 'c',
             attributes: {
-              bold: "true",
-              italic: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              italic: 'true',
+              author: '7096007617544896513',
             },
           },
           {
             attributes: {
-              bold: "true",
-              author: "7096007617544896513",
+              bold: 'true',
+              author: '7096007617544896513',
             },
-            insert: "de",
+            insert: 'de',
           },
           {
-            insert: "\n",
+            insert: '\n',
             attributes: {
-              fixEnter: "true",
+              fixEnter: 'true',
             },
           },
-        ])
+        ]),
       ).toStrictEqual([
         {
-          type: "strong",
+          type: 'strong',
           children: [
-            { type: "text", value: "ab" },
+            { type: 'text', value: 'ab' },
             {
-              type: "emphasis",
-              children: [{ type: "text", value: "c" }],
+              type: 'emphasis',
+              children: [{ type: 'text', value: 'c' }],
             },
-            { type: "text", value: "de" },
+            { type: 'text', value: 'de' },
           ],
         },
-      ]);
-    });
-  });
-});
+      ])
+    })
+  })
+})
 
-describe("transformer.transform()", () => {
-  describe("divider", () => {
-    test("one divider", () => {
+describe('transformer.transform()', () => {
+  describe('divider', () => {
+    test('one divider', () => {
       expect(
         transformer.transform({
           type: BlockType.PAGE,
@@ -692,18 +692,18 @@ describe("transformer.transform()", () => {
               },
             },
           ],
-        }).root
+        }).root,
       ).toStrictEqual({
-        type: "root",
+        type: 'root',
         children: [
           {
-            type: "thematicBreak",
+            type: 'thematicBreak',
           },
         ],
-      });
-    });
+      })
+    })
 
-    test("two divider", () => {
+    test('two divider', () => {
       expect(
         transformer.transform({
           type: BlockType.PAGE,
@@ -726,23 +726,23 @@ describe("transformer.transform()", () => {
               },
             },
           ],
-        }).root
+        }).root,
       ).toStrictEqual({
-        type: "root",
+        type: 'root',
         children: [
           {
-            type: "thematicBreak",
+            type: 'thematicBreak',
           },
           {
-            type: "thematicBreak",
+            type: 'thematicBreak',
           },
         ],
-      });
-    });
-  });
+      })
+    })
+  })
 
-  describe("heading", () => {
-    test("heading one", () => {
+  describe('heading', () => {
+    test('heading one', () => {
       expect(
         transformer.transform({
           type: BlockType.PAGE,
@@ -757,11 +757,11 @@ describe("transformer.transform()", () => {
                 type: BlockType.HEADING1,
               },
               zoneState: {
-                allText: "",
+                allText: '',
                 content: {
                   ops: [
                     {
-                      insert: "heading one",
+                      insert: 'heading one',
                       attributes: {},
                     },
                   ],
@@ -770,27 +770,27 @@ describe("transformer.transform()", () => {
               children: [],
             },
           ],
-        }).root
+        }).root,
       ).toStrictEqual({
-        type: "root",
+        type: 'root',
         children: [
           {
-            type: "heading",
+            type: 'heading',
             depth: 1,
             children: [
               {
-                type: "text",
-                value: "heading one",
+                type: 'text',
+                value: 'heading one',
               },
             ],
           },
         ],
-      });
-    });
-  });
+      })
+    })
+  })
 
-  describe("code", () => {
-    test("simple example", () => {
+  describe('code', () => {
+    test('simple example', () => {
       const { root } = transformer.transform({
         type: BlockType.PAGE,
         snapshot: {
@@ -799,12 +799,12 @@ describe("transformer.transform()", () => {
         children: [
           {
             type: BlockType.CODE,
-            language: "JavaScript",
+            language: 'JavaScript',
             snapshot: {
               type: BlockType.CODE,
             },
             zoneState: {
-              allText: "const\n",
+              allText: 'const\n',
               content: {
                 ops: [],
               },
@@ -812,23 +812,23 @@ describe("transformer.transform()", () => {
             children: [],
           },
         ],
-      });
+      })
       const expectedRoot: mdast.Root = {
-        type: "root",
+        type: 'root',
         children: [
           {
-            type: "code",
-            lang: "javascript",
-            value: "const",
+            type: 'code',
+            lang: 'javascript',
+            value: 'const',
           },
         ],
-      };
-      expect(root).toStrictEqual(expectedRoot);
-    });
-  });
+      }
+      expect(root).toStrictEqual(expectedRoot)
+    })
+  })
 
-  describe("blockquote", () => {
-    test("simple example", () => {
+  describe('blockquote', () => {
+    test('simple example', () => {
       const { root } = transformer.transform({
         type: BlockType.PAGE,
         snapshot: {
@@ -845,14 +845,14 @@ describe("transformer.transform()", () => {
                 type: BlockType.ORDERED,
                 snapshot: {
                   type: BlockType.ORDERED,
-                  seq: "1",
+                  seq: '1',
                 },
                 zoneState: {
-                  allText: "",
+                  allText: '',
                   content: {
                     ops: [
                       {
-                        insert: "list item 1",
+                        insert: 'list item 1',
                         attributes: {},
                       },
                     ],
@@ -864,14 +864,14 @@ describe("transformer.transform()", () => {
                 type: BlockType.ORDERED,
                 snapshot: {
                   type: BlockType.ORDERED,
-                  seq: "2",
+                  seq: '2',
                 },
                 zoneState: {
-                  allText: "",
+                  allText: '',
                   content: {
                     ops: [
                       {
-                        insert: "list item 2",
+                        insert: 'list item 2',
                         attributes: {},
                       },
                     ],
@@ -889,47 +889,47 @@ describe("transformer.transform()", () => {
             ],
           },
         ],
-      });
+      })
       const expectedRoot: mdast.Root = {
-        type: "root",
+        type: 'root',
         children: [
           {
-            type: "blockquote",
+            type: 'blockquote',
             children: [
               {
-                type: "list",
+                type: 'list',
                 ordered: true,
                 start: 1,
                 children: [
                   {
-                    type: "listItem",
+                    type: 'listItem',
                     data: {
                       seq: 1,
                     },
                     children: [
                       {
-                        type: "paragraph",
+                        type: 'paragraph',
                         children: [
                           {
-                            type: "text",
-                            value: "list item 1",
+                            type: 'text',
+                            value: 'list item 1',
                           },
                         ],
                       },
                     ],
                   },
                   {
-                    type: "listItem",
+                    type: 'listItem',
                     data: {
                       seq: 2,
                     },
                     children: [
                       {
-                        type: "paragraph",
+                        type: 'paragraph',
                         children: [
                           {
-                            type: "text",
-                            value: "list item 2",
+                            type: 'text',
+                            value: 'list item 2',
                           },
                         ],
                       },
@@ -940,13 +940,13 @@ describe("transformer.transform()", () => {
             ],
           },
         ],
-      };
-      expect(root).toStrictEqual(expectedRoot);
-    });
-  });
+      }
+      expect(root).toStrictEqual(expectedRoot)
+    })
+  })
 
-  describe("list", () => {
-    test("simple example", () => {
+  describe('list', () => {
+    test('simple example', () => {
       const { root } = transformer.transform({
         type: BlockType.PAGE,
         snapshot: {
@@ -959,11 +959,11 @@ describe("transformer.transform()", () => {
               type: BlockType.BULLET,
             },
             zoneState: {
-              allText: "",
+              allText: '',
               content: {
                 ops: [
                   {
-                    insert: "a",
+                    insert: 'a',
                     attributes: {},
                   },
                 ],
@@ -977,11 +977,11 @@ describe("transformer.transform()", () => {
               type: BlockType.BULLET,
             },
             zoneState: {
-              allText: "",
+              allText: '',
               content: {
                 ops: [
                   {
-                    insert: "b",
+                    insert: 'b',
                     attributes: {},
                   },
                 ],
@@ -993,14 +993,14 @@ describe("transformer.transform()", () => {
             type: BlockType.ORDERED,
             snapshot: {
               type: BlockType.ORDERED,
-              seq: "2",
+              seq: '2',
             },
             zoneState: {
-              allText: "",
+              allText: '',
               content: {
                 ops: [
                   {
-                    insert: "one",
+                    insert: 'one',
                     attributes: {},
                   },
                 ],
@@ -1012,14 +1012,14 @@ describe("transformer.transform()", () => {
             type: BlockType.ORDERED,
             snapshot: {
               type: BlockType.ORDERED,
-              seq: "auto",
+              seq: 'auto',
             },
             zoneState: {
-              allText: "",
+              allText: '',
               content: {
                 ops: [
                   {
-                    insert: "two",
+                    insert: 'two',
                     attributes: {},
                   },
                 ],
@@ -1031,14 +1031,14 @@ describe("transformer.transform()", () => {
             type: BlockType.ORDERED,
             snapshot: {
               type: BlockType.ORDERED,
-              seq: "1",
+              seq: '1',
             },
             zoneState: {
-              allText: "",
+              allText: '',
               content: {
                 ops: [
                   {
-                    insert: "one",
+                    insert: 'one',
                     attributes: {},
                   },
                 ],
@@ -1050,14 +1050,14 @@ describe("transformer.transform()", () => {
             type: BlockType.ORDERED,
             snapshot: {
               type: BlockType.ORDERED,
-              seq: "2",
+              seq: '2',
             },
             zoneState: {
-              allText: "",
+              allText: '',
               content: {
                 ops: [
                   {
-                    insert: "one",
+                    insert: 'one',
                     attributes: {},
                   },
                 ],
@@ -1071,11 +1071,11 @@ describe("transformer.transform()", () => {
               type: BlockType.TODO,
             },
             zoneState: {
-              allText: "",
+              allText: '',
               content: {
                 ops: [
                   {
-                    insert: "task one",
+                    insert: 'task one',
                     attributes: {},
                   },
                 ],
@@ -1084,36 +1084,36 @@ describe("transformer.transform()", () => {
             children: [],
           },
         ],
-      });
+      })
       const expectedRoot: mdast.Root = {
-        type: "root",
+        type: 'root',
         children: [
           {
-            type: "list",
+            type: 'list',
             children: [
               {
-                type: "listItem",
+                type: 'listItem',
                 children: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     children: [
                       {
-                        type: "text",
-                        value: "a",
+                        type: 'text',
+                        value: 'a',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 children: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     children: [
                       {
-                        type: "text",
-                        value: "b",
+                        type: 'text',
+                        value: 'b',
                       },
                     ],
                   },
@@ -1122,39 +1122,39 @@ describe("transformer.transform()", () => {
             ],
           },
           {
-            type: "list",
+            type: 'list',
             ordered: true,
             start: 2,
             children: [
               {
-                type: "listItem",
+                type: 'listItem',
                 data: {
                   seq: 2,
                 },
                 children: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     children: [
                       {
-                        type: "text",
-                        value: "one",
+                        type: 'text',
+                        value: 'one',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 data: {
-                  seq: "auto",
+                  seq: 'auto',
                 },
                 children: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     children: [
                       {
-                        type: "text",
-                        value: "two",
+                        type: 'text',
+                        value: 'two',
                       },
                     ],
                   },
@@ -1163,39 +1163,39 @@ describe("transformer.transform()", () => {
             ],
           },
           {
-            type: "list",
+            type: 'list',
             ordered: true,
             start: 1,
             children: [
               {
-                type: "listItem",
+                type: 'listItem',
                 data: {
                   seq: 1,
                 },
                 children: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     children: [
                       {
-                        type: "text",
-                        value: "one",
+                        type: 'text',
+                        value: 'one',
                       },
                     ],
                   },
                 ],
               },
               {
-                type: "listItem",
+                type: 'listItem',
                 data: {
                   seq: 2,
                 },
                 children: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     children: [
                       {
-                        type: "text",
-                        value: "one",
+                        type: 'text',
+                        value: 'one',
                       },
                     ],
                   },
@@ -1204,18 +1204,18 @@ describe("transformer.transform()", () => {
             ],
           },
           {
-            type: "list",
+            type: 'list',
             children: [
               {
-                type: "listItem",
+                type: 'listItem',
                 checked: false,
                 children: [
                   {
-                    type: "paragraph",
+                    type: 'paragraph',
                     children: [
                       {
-                        type: "text",
-                        value: "task one",
+                        type: 'text',
+                        value: 'task one',
                       },
                     ],
                   },
@@ -1224,8 +1224,8 @@ describe("transformer.transform()", () => {
             ],
           },
         ],
-      };
-      expect(root).toStrictEqual(expectedRoot);
-    });
-  });
-});
+      }
+      expect(root).toStrictEqual(expectedRoot)
+    })
+  })
+})

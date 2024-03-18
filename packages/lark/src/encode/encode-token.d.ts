@@ -1,1 +1,1 @@
-export declare const encodeToken: (value: string) => string;
+export declare const encodeToken: (value: string) => string

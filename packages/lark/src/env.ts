@@ -1,18 +1,18 @@
-const noop = () => {};
+const noop = () => {}
 
 interface ToastOptions {
-  content: string;
-  key?: string;
-  keepAlive?: boolean;
+  content: string
+  key?: string
+  keepAlive?: boolean
 }
 
 export interface Toast {
-  error: (options: ToastOptions) => void;
-  warning: (options: ToastOptions) => void;
-  info: (options: ToastOptions) => void;
-  loading: (options: ToastOptions) => void;
-  success: (options: ToastOptions) => void;
-  remove: (key: string) => void;
+  error: (options: ToastOptions) => void
+  warning: (options: ToastOptions) => void
+  info: (options: ToastOptions) => void
+  loading: (options: ToastOptions) => void
+  success: (options: ToastOptions) => void
+  remove: (key: string) => void
 }
 
 const defaultToast: Toast = {
@@ -22,22 +22,22 @@ const defaultToast: Toast = {
   loading: noop,
   success: noop,
   remove: noop,
-};
-
-export const Toast = window.Toast ?? defaultToast;
-
-export interface User {
-  language: string;
 }
 
-export const User = window.User;
+export const Toast = window.Toast ?? defaultToast
+
+export interface User {
+  language: string
+}
+
+export const User = window.User
 
 export interface PageMain {
   blockManager: {
     model: {
-      rootBlockModel: import("./docx").PageBlock;
-    };
-  };
+      rootBlockModel: import('./docx').PageBlock
+    }
+  }
 }
 
-export const PageMain = window.PageMain;
+export const PageMain = window.PageMain

@@ -1,5 +1,5 @@
-import * as mdast from "mdast";
-import chunk from "lodash-es/chunk";
+import * as mdast from 'mdast'
+import chunk from 'lodash-es/chunk'
 import {
   compare,
   isDefined,
@@ -8,18 +8,18 @@ import {
   isPhrasingContent,
   isRootContent,
   isTableCell,
-} from "@dolphin/common";
-import { PageMain, User } from "./env";
+} from '@dolphin/common'
+import { PageMain, User } from './env'
 
-declare module "mdast" {
+declare module 'mdast' {
   interface ImageData {
-    name: string;
-    token: string;
-    fetchSources: () => Promise<ImageSources | null>;
+    name: string
+    token: string
+    fetchSources: () => Promise<ImageSources | null>
   }
 
   interface ListItemData {
-    seq?: number | "auto";
+    seq?: number | 'auto'
   }
 }
 
@@ -27,80 +27,80 @@ declare module "mdast" {
  * @see https://open.feishu.cn/document/client-docs/docs-add-on/06-data-structure/BlockType
  */
 export enum BlockType {
-  PAGE = "page",
-  BITABLE = "bitable",
-  CALLOUT = "callout",
-  CHAT_CARD = "chat_card",
-  CODE = "code",
-  DIAGRAM = "diagram",
-  DIVIDER = "divider",
-  FILE = "file",
-  GRID = "grid",
-  GRID_COLUMN = "grid_column",
-  HEADING1 = "heading1",
-  HEADING2 = "heading2",
-  HEADING3 = "heading3",
-  HEADING4 = "heading4",
-  HEADING5 = "heading5",
-  HEADING6 = "heading6",
-  HEADING7 = "heading7",
-  HEADING8 = "heading8",
-  HEADING9 = "heading9",
-  IFRAME = "iframe",
-  IMAGE = "image",
-  ISV = "isv",
-  MINDNOTE = "mindnote",
-  BULLET = "bullet",
-  ORDERED = "ordered",
-  TODO = "todo",
-  QUOTE = "quote",
-  QUOTE_CONTAINER = "quote_container",
-  SHEET = "sheet",
-  TABLE = "table",
-  CELL = "table_cell",
-  TEXT = "text",
-  VIEW = "view",
+  PAGE = 'page',
+  BITABLE = 'bitable',
+  CALLOUT = 'callout',
+  CHAT_CARD = 'chat_card',
+  CODE = 'code',
+  DIAGRAM = 'diagram',
+  DIVIDER = 'divider',
+  FILE = 'file',
+  GRID = 'grid',
+  GRID_COLUMN = 'grid_column',
+  HEADING1 = 'heading1',
+  HEADING2 = 'heading2',
+  HEADING3 = 'heading3',
+  HEADING4 = 'heading4',
+  HEADING5 = 'heading5',
+  HEADING6 = 'heading6',
+  HEADING7 = 'heading7',
+  HEADING8 = 'heading8',
+  HEADING9 = 'heading9',
+  IFRAME = 'iframe',
+  IMAGE = 'image',
+  ISV = 'isv',
+  MINDNOTE = 'mindnote',
+  BULLET = 'bullet',
+  ORDERED = 'ordered',
+  TODO = 'todo',
+  QUOTE = 'quote',
+  QUOTE_CONTAINER = 'quote_container',
+  SHEET = 'sheet',
+  TABLE = 'table',
+  CELL = 'table_cell',
+  TEXT = 'text',
+  VIEW = 'view',
 }
 
 interface Attributes {
-  fixEnter?: string;
-  italic?: string;
-  bold?: string;
-  strikethrough?: string;
-  inlineCode?: string;
-  link?: string;
-  [attrName: string]: unknown;
+  fixEnter?: string
+  italic?: string
+  bold?: string
+  strikethrough?: string
+  inlineCode?: string
+  link?: string
+  [attrName: string]: unknown
 }
 
 interface Operation {
-  attributes: Attributes;
-  insert: string;
+  attributes: Attributes
+  insert: string
 }
 
 interface BlockZoneState {
-  allText: string;
+  allText: string
   content: {
-    ops: Operation[];
-  };
+    ops: Operation[]
+  }
 }
 
 interface BlockSnapshot {
-  type: BlockType | "pending";
+  type: BlockType | 'pending'
 }
 
 interface Block<T extends Blocks = Blocks> {
-  type: BlockType;
-  zoneState?: BlockZoneState;
-  snapshot: BlockSnapshot;
-  children: T[];
+  type: BlockType
+  zoneState?: BlockZoneState
+  snapshot: BlockSnapshot
+  children: T[]
 }
 
 export interface PageBlock extends Block {
-  type: BlockType.PAGE;
+  type: BlockType.PAGE
 }
 
 interface DividerBlock extends Block {
-  type: BlockType.DIVIDER;
+  type: BlockType.DIVIDER
 }
 
 interface HeadingBlock extends Block<TextBlock> {
@@ -113,91 +113,91 @@ interface HeadingBlock extends Block<TextBlock> {
     | BlockType.HEADING6
     | BlockType.HEADING7
     | BlockType.HEADING8
-    | BlockType.HEADING9;
-  depth: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+    | BlockType.HEADING9
+  depth: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 }
 
 interface CodeBlock extends Block<TextBlock> {
-  type: BlockType.CODE;
-  language: string;
+  type: BlockType.CODE
+  language: string
 }
 
 interface QuoteContainerBlock extends Block {
-  type: BlockType.QUOTE_CONTAINER;
+  type: BlockType.QUOTE_CONTAINER
 }
 
 interface BulletBlock extends Block {
-  type: BlockType.BULLET;
+  type: BlockType.BULLET
 }
 
 interface OrderedBlock extends Block<TextBlock> {
-  type: BlockType.ORDERED;
+  type: BlockType.ORDERED
   snapshot: {
-    type: BlockType.ORDERED;
-    seq: string;
-  };
+    type: BlockType.ORDERED
+    seq: string
+  }
 }
 
 interface TodoBlock extends Block {
-  type: BlockType.TODO;
+  type: BlockType.TODO
   snapshot: {
-    type: BlockType.TODO;
-    done?: boolean;
-  };
+    type: BlockType.TODO
+    done?: boolean
+  }
 }
 
 interface TextBlock extends Block {
-  type: BlockType.TEXT;
+  type: BlockType.TEXT
 }
 
 interface ImageCaption {
   text: {
     initialAttributedTexts: {
-      text: { 0: string } | null;
-    };
-  };
+      text: { 0: string } | null
+    }
+  }
 }
 
 interface ImageBlockData {
-  token: string;
-  width: number;
-  height: number;
-  mimeType: string;
-  name: string;
-  caption?: ImageCaption;
+  token: string
+  width: number
+  height: number
+  mimeType: string
+  name: string
+  caption?: ImageCaption
 }
 
 interface ImageSources {
-  originSrc: string;
-  src: string;
+  originSrc: string
+  src: string
 }
 
 interface ImageBlock extends Block {
-  type: BlockType.IMAGE;
+  type: BlockType.IMAGE
   snapshot: {
-    type: BlockType.IMAGE;
-    image: ImageBlockData;
-  };
+    type: BlockType.IMAGE
+    image: ImageBlockData
+  }
   imageManager: {
     fetch: <T extends ImageSources>(
       image: { token: string },
       options: unknown,
-      callback: (sources: ImageSources) => T
-    ) => Promise<T>;
-  };
+      callback: (sources: ImageSources) => T,
+    ) => Promise<T>
+  }
 }
 
 interface TableBlock extends Block<TableCellBlock> {
-  type: BlockType.TABLE;
+  type: BlockType.TABLE
   snapshot: {
-    type: BlockType.TABLE;
-    rows_id: string[];
-    columns_id: string[];
-  };
+    type: BlockType.TABLE
+    rows_id: string[]
+    columns_id: string[]
+  }
 }
 
 interface TableCellBlock extends Block {
-  type: BlockType.CELL;
+  type: BlockType.CELL
 }
 
 interface NotSupportedBlock extends Block {
@@ -214,8 +214,8 @@ interface NotSupportedBlock extends Block {
     | BlockType.ISV
     | BlockType.MINDNOTE
     | BlockType.SHEET
-    | BlockType.VIEW;
-  children: [];
+    | BlockType.VIEW
+  children: []
 }
 
 type Blocks =
@@ -231,239 +231,239 @@ type Blocks =
   | ImageBlock
   | TableBlock
   | TableCellBlock
-  | NotSupportedBlock;
+  | NotSupportedBlock
 
 const chunkBy = <T>(
   items: T[],
-  isEqual: (current: T, next: T) => boolean
+  isEqual: (current: T, next: T) => boolean,
 ): T[][] => {
-  const chunks: T[][] = [];
-  let index = 0;
+  const chunks: T[][] = []
+  let index = 0
 
   while (index < items.length) {
-    let nextIndex = index + 1;
+    let nextIndex = index + 1
     while (
       nextIndex < items.length &&
       isEqual(items[index], items[nextIndex])
     ) {
-      nextIndex++;
+      nextIndex++
     }
 
-    chunks.push(items.slice(index, nextIndex));
+    chunks.push(items.slice(index, nextIndex))
 
-    index = nextIndex;
+    index = nextIndex
   }
 
-  return chunks;
-};
+  return chunks
+}
 
 export const mergeListItems = <T extends mdast.Nodes>(nodes: T[]) =>
   chunkBy(nodes, (current, next) => {
     const listItemType = (listItem: mdast.ListItem) => {
-      if (typeof listItem.checked === "boolean") {
-        return BlockType.TODO;
+      if (typeof listItem.checked === 'boolean') {
+        return BlockType.TODO
       }
 
       if (
-        typeof listItem.data?.seq === "number" ||
-        listItem.data?.seq === "auto"
+        typeof listItem.data?.seq === 'number' ||
+        listItem.data?.seq === 'auto'
       ) {
-        return BlockType.ORDERED;
+        return BlockType.ORDERED
       }
 
-      return BlockType.BULLET;
-    };
+      return BlockType.BULLET
+    }
 
     const isEqualOrderedListItem = (
       node: mdast.ListItem,
-      other: mdast.ListItem
+      other: mdast.ListItem,
     ) => {
-      const seq = node.data?.seq;
-      const otherSeq = other.data?.seq;
+      const seq = node.data?.seq
+      const otherSeq = other.data?.seq
 
-      if (!seq || !otherSeq) return false;
+      if (!seq || !otherSeq) return false
 
-      if (seq === "auto") {
-        return otherSeq === "auto";
+      if (seq === 'auto') {
+        return otherSeq === 'auto'
       }
 
-      return otherSeq === "auto" || seq + 1 === otherSeq;
-    };
+      return otherSeq === 'auto' || seq + 1 === otherSeq
+    }
 
     const isEqualListItem = (node: mdast.ListItem, other: mdast.ListItem) => {
-      const type = listItemType(node);
-      const otherType = listItemType(other);
+      const type = listItemType(node)
+      const otherType = listItemType(other)
 
       if (type === otherType) {
         return type === BlockType.ORDERED
           ? isEqualOrderedListItem(node, other)
-          : true;
+          : true
       }
 
-      return false;
-    };
+      return false
+    }
 
     return (
-      current.type === "listItem" &&
-      next.type === "listItem" &&
+      current.type === 'listItem' &&
+      next.type === 'listItem' &&
       isEqualListItem(current, next)
-    );
-  }).map((nodes) => {
-    const node = nodes[0];
+    )
+  }).map(nodes => {
+    const node = nodes[0]
 
-    if (node.type === "listItem") {
+    if (node.type === 'listItem') {
       const list: mdast.List = {
-        type: "list",
-        ...(typeof node.data?.seq === "number"
+        type: 'list',
+        ...(typeof node.data?.seq === 'number'
           ? {
               ordered: true,
               start: node.data.seq,
             }
           : null),
         children: nodes as mdast.ListItem[],
-      };
-      return list;
+      }
+      return list
     }
 
-    return node;
-  });
+    return node
+  })
 
 export const mergePhrasingContents = (nodes: mdast.PhrasingContent[]) =>
   chunkBy(nodes, (current, next) => {
-    if (current.type === "link" && next.type === "link") {
-      return current.url === next.url;
+    if (current.type === 'link' && next.type === 'link') {
+      return current.url === next.url
     }
 
     if (
-      current.type === "emphasis" ||
-      current.type === "strong" ||
-      current.type === "delete" ||
-      current.type === "text" ||
-      current.type === "inlineCode"
+      current.type === 'emphasis' ||
+      current.type === 'strong' ||
+      current.type === 'delete' ||
+      current.type === 'text' ||
+      current.type === 'inlineCode'
     ) {
-      return current.type === next.type;
+      return current.type === next.type
     }
 
-    return false;
-  }).map((nodes) => {
+    return false
+  }).map(nodes => {
     const node = nodes.reduce((pre, cur) => {
-      if ("children" in pre && "children" in cur) {
+      if ('children' in pre && 'children' in cur) {
         return {
           ...pre,
           ...cur,
           children: pre.children.concat(cur.children),
-        };
+        }
       }
 
-      if ("value" in pre && "value" in cur) {
+      if ('value' in pre && 'value' in cur) {
         return {
           ...pre,
           ...cur,
           value: pre.value.concat(cur.value),
-        };
+        }
       }
 
-      return pre;
-    });
+      return pre
+    })
 
-    if ("children" in node) {
-      node.children = mergePhrasingContents(node.children);
+    if ('children' in node) {
+      node.children = mergePhrasingContents(node.children)
     }
 
-    return node;
-  });
+    return node
+  })
 
 export const transformOperationsToPhrasingContents = (
-  ops: Operation[]
+  ops: Operation[],
 ): mdast.PhrasingContent[] => {
-  const operations = ops.filter((operation) => !operation.attributes.fixEnter);
+  const operations = ops.filter(operation => !operation.attributes.fixEnter)
 
   let indexToMarks = operations.map(({ attributes }) => {
-    type SupportAttrName = "italic" | "bold" | "strikethrough" | "link";
+    type SupportAttrName = 'italic' | 'bold' | 'strikethrough' | 'link'
 
     const isSupportAttr = (attr: string): attr is SupportAttrName =>
-      attr === "italic" ||
-      attr === "bold" ||
-      attr === "strikethrough" ||
-      attr === "link";
+      attr === 'italic' ||
+      attr === 'bold' ||
+      attr === 'strikethrough' ||
+      attr === 'link'
 
     const attrNameToNodeType = (
-      attr: SupportAttrName
-    ): "emphasis" | "strong" | "delete" | "link" => {
+      attr: SupportAttrName,
+    ): 'emphasis' | 'strong' | 'delete' | 'link' => {
       switch (attr) {
-        case "italic":
-          return "emphasis";
-        case "bold":
-          return "strong";
-        case "strikethrough":
-          return "delete";
-        case "link":
-          return "link";
+        case 'italic':
+          return 'emphasis'
+        case 'bold':
+          return 'strong'
+        case 'strikethrough':
+          return 'delete'
+        case 'link':
+          return 'link'
         default:
-          return undefined as never;
+          return undefined as never
       }
-    };
+    }
 
     const marks = Object.keys(attributes)
       .filter(isSupportAttr)
-      .map(attrNameToNodeType);
+      .map(attrNameToNodeType)
 
-    return marks;
-  });
+    return marks
+  })
 
   indexToMarks = indexToMarks.map((marks, index) => {
-    const markToPriority = new Map(marks.map((mark) => [mark, 0]));
+    const markToPriority = new Map(marks.map(mark => [mark, 0]))
 
-    marks.forEach((mark) => {
-      let priority = 0;
-      let start = index;
+    marks.forEach(mark => {
+      let priority = 0
+      let start = index
       while (start >= 0 && indexToMarks[start].includes(mark)) {
-        priority += operations[start].insert.length;
-        start--;
+        priority += operations[start].insert.length
+        start--
       }
-      let end = index + 1;
+      let end = index + 1
       while (end < indexToMarks.length && indexToMarks[end].includes(mark)) {
-        priority += operations[end].insert.length;
-        end++;
+        priority += operations[end].insert.length
+        end++
       }
-      markToPriority.set(mark, priority);
-    });
+      markToPriority.set(mark, priority)
+    })
 
     return marks.sort((a, b) =>
-      compare(markToPriority.get(a) ?? 0, markToPriority.get(b) ?? 0)
-    );
-  });
+      compare(markToPriority.get(a) ?? 0, markToPriority.get(b) ?? 0),
+    )
+  })
 
   const nodes = indexToMarks.map((marks, index) => {
-    const { attributes, insert } = operations[index];
+    const { attributes, insert } = operations[index]
 
     const isInlineCode = Object.keys(attributes).find(
-      (attr) => attr === "inlineCode"
-    );
+      attr => attr === 'inlineCode',
+    )
     let node: mdast.PhrasingContent = {
-      type: isInlineCode ? "inlineCode" : "text",
+      type: isInlineCode ? 'inlineCode' : 'text',
       value: insert,
-    };
+    }
 
     for (const mark of marks) {
       node =
-        mark === "link"
+        mark === 'link'
           ? {
               type: mark,
-              url: decodeURIComponent(attributes.link ?? ""),
+              url: decodeURIComponent(attributes.link ?? ''),
               children: [node],
             }
           : {
               type: mark,
               children: [node],
-            };
+            }
     }
 
-    return node;
-  });
+    return node
+  })
 
-  return mergePhrasingContents(nodes);
-};
+  return mergePhrasingContents(nodes)
+}
 
 const fetchImageSources = (imageBlock: ImageBlock) => {
   const {
@@ -471,62 +471,62 @@ const fetchImageSources = (imageBlock: ImageBlock) => {
     snapshot: {
       image: { token },
     },
-  } = imageBlock;
+  } = imageBlock
 
-  return imageManager.fetch({ token }, {}, (sources) => sources);
-};
+  return imageManager.fetch({ token }, {}, sources => sources)
+}
 
 type Mutate<T extends Block> = T extends PageBlock
   ? mdast.Root
   : T extends DividerBlock
-  ? mdast.ThematicBreak
-  : T extends HeadingBlock
-  ? mdast.Heading
-  : T extends CodeBlock
-  ? mdast.Code
-  : T extends QuoteContainerBlock
-  ? mdast.Blockquote
-  : T extends BulletBlock | OrderedBlock | TodoBlock
-  ? mdast.ListItem
-  : T extends TextBlock
-  ? mdast.Text
-  : T extends TableBlock
-  ? mdast.Table
-  : T extends TableCellBlock
-  ? mdast.TableCell
-  : null;
+    ? mdast.ThematicBreak
+    : T extends HeadingBlock
+      ? mdast.Heading
+      : T extends CodeBlock
+        ? mdast.Code
+        : T extends QuoteContainerBlock
+          ? mdast.Blockquote
+          : T extends BulletBlock | OrderedBlock | TodoBlock
+            ? mdast.ListItem
+            : T extends TextBlock
+              ? mdast.Text
+              : T extends TableBlock
+                ? mdast.Table
+                : T extends TableCellBlock
+                  ? mdast.TableCell
+                  : null
 
 interface TransformResult<T> {
-  root: T;
-  images: mdast.Image[];
+  root: T
+  images: mdast.Image[]
 }
 
 class Transformer {
-  private parent: mdast.Parent | null = null;
-  private images: mdast.Image[] = [];
+  private parent: mdast.Parent | null = null
+  private images: mdast.Image[] = []
 
   private transformParentBlock<T extends Blocks>(
     block: T,
     evaluateNode: (block: T) => Mutate<T>,
     transformChildren: (
-      children: mdast.Nodes[]
-    ) => Mutate<T> extends mdast.Parent ? Mutate<T>["children"] : never
+      children: mdast.Nodes[],
+    ) => Mutate<T> extends mdast.Parent ? Mutate<T>['children'] : never,
   ) {
-    const previousParent = this.parent;
+    const previousParent = this.parent
 
-    const currentParent = evaluateNode(block);
+    const currentParent = evaluateNode(block)
     if (!currentParent || !isParent(currentParent)) {
-      return currentParent;
+      return currentParent
     }
-    this.parent = currentParent;
+    this.parent = currentParent
 
     currentParent.children = transformChildren(
-      block.children.map(this._transform).filter(isDefined)
-    );
+      block.children.map(this._transform).filter(isDefined),
+    )
 
-    this.parent = previousParent;
+    this.parent = previousParent
 
-    return currentParent;
+    return currentParent
   }
 
   private _transform = (block: Blocks): mdast.Nodes | null => {
@@ -535,17 +535,17 @@ class Transformer {
         return this.transformParentBlock(
           block,
           () => ({
-            type: "root",
+            type: 'root',
             children: [],
           }),
-          (nodes) => mergeListItems(nodes).filter(isRootContent)
-        );
+          nodes => mergeListItems(nodes).filter(isRootContent),
+        )
       }
       case BlockType.DIVIDER: {
         const thematicBreak: mdast.ThematicBreak = {
-          type: "thematicBreak",
-        };
-        return thematicBreak;
+          type: 'thematicBreak',
+        }
+        return thematicBreak
       }
       case BlockType.HEADING1:
       case BlockType.HEADING2:
@@ -554,42 +554,42 @@ class Transformer {
       case BlockType.HEADING5:
       case BlockType.HEADING6: {
         const heading: mdast.Heading = {
-          type: "heading",
-          depth: Number(block.type.at(-1)) as mdast.Heading["depth"],
+          type: 'heading',
+          depth: Number(block.type.at(-1)) as mdast.Heading['depth'],
           children: transformOperationsToPhrasingContents(
-            block.zoneState?.content.ops ?? []
+            block.zoneState?.content.ops ?? [],
           ),
-        };
-        return heading;
+        }
+        return heading
       }
       case BlockType.CODE: {
         const code: mdast.Code = {
-          type: "code",
+          type: 'code',
           lang: block.language.toLocaleLowerCase(),
-          value: block.zoneState?.allText.slice(0, -1) ?? "",
-        };
-        return code;
+          value: block.zoneState?.allText.slice(0, -1) ?? '',
+        }
+        return code
       }
       case BlockType.QUOTE_CONTAINER: {
         return this.transformParentBlock(
           block,
           () => ({
-            type: "blockquote",
+            type: 'blockquote',
             children: [],
           }),
-          (nodes) => mergeListItems(nodes).filter(isBlockquoteContent)
-        );
+          nodes => mergeListItems(nodes).filter(isBlockquoteContent),
+        )
       }
       case BlockType.BULLET:
       case BlockType.ORDERED:
       case BlockType.TODO: {
         const listItem: mdast.ListItem = {
-          type: "listItem",
+          type: 'listItem',
           children: [
             {
-              type: "paragraph",
+              type: 'paragraph',
               children: transformOperationsToPhrasingContents(
-                block.zoneState?.content.ops ?? []
+                block.zoneState?.content.ops ?? [],
               ),
             },
           ],
@@ -601,129 +601,127 @@ class Transformer {
                 data: {
                   seq: /[0-9]+/.test(block.snapshot.seq)
                     ? Number(block.snapshot.seq)
-                    : "auto",
+                    : 'auto',
                 },
               }
             : null),
-        };
-        return listItem;
+        }
+        return listItem
       }
       case BlockType.TEXT:
       case BlockType.HEADING7:
       case BlockType.HEADING8:
       case BlockType.HEADING9: {
         const paragraph: mdast.Paragraph = {
-          type: "paragraph",
+          type: 'paragraph',
           children: transformOperationsToPhrasingContents(
-            block.zoneState?.content.ops ?? []
+            block.zoneState?.content.ops ?? [],
           ),
-        };
-        return paragraph;
+        }
+        return paragraph
       }
       case BlockType.IMAGE: {
-        const { caption, name, token } = block.snapshot.image;
+        const { caption, name, token } = block.snapshot.image
         const alt = (
-          caption?.text.initialAttributedTexts.text?.[0] ?? ""
-        ).slice(0, -1);
+          caption?.text.initialAttributedTexts.text?.[0] ?? ''
+        ).slice(0, -1)
         const image: mdast.Image = {
-          type: "image",
-          url: "",
+          type: 'image',
+          url: '',
           alt,
           data: {
             name,
             token,
             fetchSources: () => fetchImageSources(block),
           },
-        };
+        }
 
-        this.images.push(image);
+        this.images.push(image)
 
-        return this.parent?.type === "tableCell"
+        return this.parent?.type === 'tableCell'
           ? image
-          : { type: "paragraph", children: [image] };
+          : { type: 'paragraph', children: [image] }
       }
       case BlockType.TABLE: {
         return this.transformParentBlock(
           block,
-          () => ({ type: "table", children: [] }),
-          (nodes) =>
+          () => ({ type: 'table', children: [] }),
+          nodes =>
             chunk(
               nodes.filter(isTableCell),
-              block.snapshot.columns_id.length
-            ).map((tableCells) => ({
-              type: "tableRow",
+              block.snapshot.columns_id.length,
+            ).map(tableCells => ({
+              type: 'tableRow',
               children: tableCells,
-            }))
-        );
+            })),
+        )
       }
       case BlockType.CELL: {
         return this.transformParentBlock(
           block,
-          () => ({ type: "tableCell", children: [] }),
-          (nodes) =>
+          () => ({ type: 'tableCell', children: [] }),
+          nodes =>
             nodes
-              .map((node) => (node.type === "paragraph" ? node.children : node))
+              .map(node => (node.type === 'paragraph' ? node.children : node))
               .flat(1)
-              .filter(isPhrasingContent)
-        );
+              .filter(isPhrasingContent),
+        )
       }
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   transform<T extends Blocks>(block: T): TransformResult<Mutate<T>> {
-    const node = this._transform(block) as Mutate<T>;
+    const node = this._transform(block) as Mutate<T>
 
     const result: TransformResult<Mutate<T>> = {
       root: node,
       images: this.images,
-    };
+    }
 
-    this.parent = null;
-    this.images = [];
+    this.parent = null
+    this.images = []
 
-    return result;
+    return result
   }
 }
 
-export const transformer = new Transformer();
+export const transformer = new Transformer()
 
 export class Docx {
   get rootBlock() {
     if (!PageMain) {
-      return null;
+      return null
     }
 
-    return PageMain.blockManager.model.rootBlockModel;
+    return PageMain.blockManager.model.rootBlockModel
   }
 
   get language() {
-    return User?.language === "zh" ? "zh" : "en";
+    return User?.language === 'zh' ? 'zh' : 'en'
   }
 
   get pageTitle() {
-    if (!this.rootBlock || !this.rootBlock.zoneState) return null;
+    if (!this.rootBlock || !this.rootBlock.zoneState) return null
 
-    return this.rootBlock.zoneState.allText.slice(0, -1);
+    return this.rootBlock.zoneState.allText.slice(0, -1)
   }
 
   isReady() {
     return (
       !!this.rootBlock &&
-      this.rootBlock.children.every(
-        (block) => block.snapshot.type !== "pending"
-      )
-    );
+      this.rootBlock.children.every(block => block.snapshot.type !== 'pending')
+    )
   }
 
   intoMarkdownAST(): TransformResult<mdast.Root> {
     if (!this.rootBlock) {
-      return { root: { type: "root", children: [] }, images: [] };
+      return { root: { type: 'root', children: [] }, images: [] }
     }
 
-    return transformer.transform(this.rootBlock);
+    return transformer.transform(this.rootBlock)
   }
 }
 
-export const docx = new Docx();
+export const docx = new Docx()
