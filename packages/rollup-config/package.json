@@ -5,6 +5,10 @@
   "exports": {
     "./lib": "./lib.js"
   },
+  "scripts": {
+    "format": "prettier . --write --ignore-path ../../.gitignore",
+    "format-check": "prettier . --check --ignore-path ../../.gitignore"
+  },
   "dependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",

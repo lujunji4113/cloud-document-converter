@@ -1,4 +1,8 @@
 {
   "name": "@dolphin/typescript-config",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "scripts": {
+    "format": "prettier . --write --ignore-path ../../.gitignore",
+    "format-check": "prettier . --check --ignore-path ../../.gitignore"
+  }
 }

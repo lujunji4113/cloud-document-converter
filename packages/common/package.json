@@ -20,7 +20,9 @@
     "clean": "rm -rf dist",
     "build": "rollup -c",
     "check": "tsc --noEmit",
-    "lint": "eslint src/**"
+    "lint": "eslint src/**",
+    "format": "prettier . --write --ignore-path ../../.gitignore",
+    "format-check": "prettier . --check --ignore-path ../../.gitignore"
   },
   "devDependencies": {
     "@dolphin/eslint-config": "workspace:^",

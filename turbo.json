@@ -11,6 +11,8 @@
     },
     "lint": {
       "dependsOn": ["^lint"]
-    }
+    },
+    "format": {},
+    "format-check": {}
   }
 }
