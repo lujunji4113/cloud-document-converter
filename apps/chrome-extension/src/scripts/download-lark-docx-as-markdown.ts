@@ -97,7 +97,7 @@ const main = async () => {
     return;
   }
 
-  let { root, images } = docx.intoMarkdownAST();
+  const { root, images } = docx.intoMarkdownAST();
   const recommendName = normalizeFileName(
     docx.pageTitle ? normalizeFileName(docx.pageTitle.slice(0, 100)) : "doc"
   );
@@ -107,7 +107,7 @@ const main = async () => {
   const toBlob = async () => {
     let blob: Blob;
 
-    let allItemsCount = images.length + 1;
+    const allItemsCount = images.length + 1;
 
     const updateLoading = (content: string) => {
       Toast.loading({
@@ -122,7 +122,7 @@ const main = async () => {
 
       blob = new Blob([markdown]);
     } else {
-      let zipFs = new fs.FS();
+      const zipFs = new fs.FS();
 
       updateLoading(
         i18next.t(TranslationKey.DOWNLOADING_IMAGES, {
@@ -135,7 +135,7 @@ const main = async () => {
         images.map(async (image) => {
           if (image.data) {
             const { name, fetchSources } = image.data;
-            let blobUrl = (await fetchSources())?.src;
+            const blobUrl = (await fetchSources())?.src;
             if (!blobUrl) {
               Toast.error({
                 content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {

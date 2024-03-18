@@ -21,6 +21,9 @@ importers:
       turbo:
         specifier: ^1.12.5
         version: 1.12.5
+      typescript:
+        specifier: ^5.4.2
+        version: 5.4.2
       vite:
         specifier: ^5.1.6
         version: 5.1.6
@@ -3902,7 +3905,6 @@ packages:
     resolution: {integrity: sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: false
 
   /ufo@1.4.0:
     resolution: {integrity: sha512-Hhy+BhRBleFjpJ2vchUNN40qgkh0366FWJGqVLYBHev0vpHTrXSA0ryT+74UiW6KWsldNurQMKGqCm1M2zBciQ==}

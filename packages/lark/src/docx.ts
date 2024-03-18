@@ -179,11 +179,11 @@ interface ImageBlock extends Block {
     image: ImageBlockData;
   };
   imageManager: {
-    fetch: (
+    fetch: <T extends ImageSources>(
       image: { token: string },
-      options: {},
-      callback: (sources: ImageSources) => void
-    ) => Promise<void>;
+      options: unknown,
+      callback: (sources: ImageSources) => T
+    ) => Promise<T>;
   };
 }
 
@@ -237,7 +237,7 @@ const chunkBy = <T>(
   items: T[],
   isEqual: (current: T, next: T) => boolean
 ): T[][] => {
-  let chunks: T[][] = [];
+  const chunks: T[][] = [];
   let index = 0;
 
   while (index < items.length) {
@@ -434,7 +434,7 @@ export const transformOperationsToPhrasingContents = (
     );
   });
 
-  let nodes = indexToMarks.map((marks, index) => {
+  const nodes = indexToMarks.map((marks, index) => {
     const { attributes, insert } = operations[index];
 
     const isInlineCode = Object.keys(attributes).find(
@@ -465,25 +465,16 @@ export const transformOperationsToPhrasingContents = (
   return mergePhrasingContents(nodes);
 };
 
-const fetchImageSources = (imageBlock: ImageBlock) =>
-  new Promise<ImageSources | null>(async (resolve) => {
-    try {
-      const {
-        imageManager,
-        snapshot: {
-          image: { token },
-        },
-      } = imageBlock;
+const fetchImageSources = (imageBlock: ImageBlock) => {
+  const {
+    imageManager,
+    snapshot: {
+      image: { token },
+    },
+  } = imageBlock;
 
-      await imageManager.fetch({ token }, {}, async (sources) => {
-        resolve(sources);
-      });
-
-      resolve(null);
-    } catch {
-      resolve(null);
-    }
-  });
+  return imageManager.fetch({ token }, {}, (sources) => sources);
+};
 
 type Mutate<T extends Block> = T extends PageBlock
   ? mdast.Root
