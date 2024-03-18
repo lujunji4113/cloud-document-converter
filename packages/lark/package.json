@@ -24,9 +24,11 @@
     "clean": "rm -rf dist",
     "build": "rollup -c",
     "check": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint src/**"
   },
   "devDependencies": {
+    "@dolphin/eslint-config": "workspace:^",
     "@dolphin/rollup-config": "workspace:^",
     "@dolphin/typescript-config": "workspace:^",
     "@types/lodash-es": "^4.17.12",

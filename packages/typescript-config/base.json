@@ -2,9 +2,9 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "strict": true,
-    "module": "esnext",
+    "module": "ES2022",
     "moduleResolution": "bundler",
-    "target": "esnext",
+    "target": "ES2022",
     "declaration": false,
     "skipLibCheck": true,
     "isolatedModules": true

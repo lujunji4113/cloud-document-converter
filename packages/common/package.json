@@ -19,9 +19,11 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rollup -c",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "lint": "eslint src/**"
   },
   "devDependencies": {
+    "@dolphin/eslint-config": "workspace:^",
     "@dolphin/rollup-config": "workspace:^",
     "@dolphin/typescript-config": "workspace:^",
     "@types/mdast": "^4.0.3",

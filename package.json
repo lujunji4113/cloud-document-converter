@@ -6,7 +6,8 @@
     "build": "turbo run build",
     "check": "turbo run check",
     "clean": "turbo run clean",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "turbo run lint"
   },
   "keywords": [
     "lark",
@@ -14,6 +15,7 @@
   ],
   "author": "Junji Lu",
   "devDependencies": {
+    "eslint": "^8.57.0",
     "happy-dom": "^13.7.8",
     "turbo": "^1.12.5",
     "vite": "^5.1.6",

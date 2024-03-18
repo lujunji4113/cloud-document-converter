@@ -5,12 +5,14 @@
     "clean": "rm -rf bundles dist/*",
     "copy": "cp -R _locales bundles images manifest.json popup.html popup.js dist",
     "build": "rollup -c && mkdir -p dist && npm run copy",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "lint": "eslint src/**"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",
     "@babel/preset-typescript": "^7.23.3",
+    "@dolphin/eslint-config": "workspace:^",
     "@dolphin/typescript-config": "workspace:^",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",

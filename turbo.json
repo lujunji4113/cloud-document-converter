@@ -8,6 +8,9 @@
     "check": {},
     "clean": {
       "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     }
   }
 }
