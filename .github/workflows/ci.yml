@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts'
+          node-version: '20'
           cache: 'pnpm'
 
       - run: pnpm install
@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts'
+          node-version: '20'
           cache: 'pnpm'
 
       - run: pnpm install
@@ -49,7 +49,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts'
+          node-version: '20'
           cache: 'pnpm'
 
       - run: pnpm install
@@ -65,7 +65,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts'
+          node-version: '20'
           cache: 'pnpm'
 
       - run: pnpm install
