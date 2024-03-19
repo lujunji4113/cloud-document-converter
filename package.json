@@ -6,10 +6,11 @@
     "build": "turbo run build",
     "check": "turbo run check",
     "clean": "turbo run clean",
-    "test": "vitest",
+    "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "turbo run format",
-    "format-check": "turbo run format-check"
+    "format-check": "turbo run format-check",
+    "release": "turbo run format-check lint check test build && changeset version"
   },
   "keywords": [
     "lark",
@@ -17,6 +18,7 @@
   ],
   "author": "Junji Lu",
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "eslint": "^8.57.0",
     "happy-dom": "^13.7.8",
     "prettier": "^3.2.5",

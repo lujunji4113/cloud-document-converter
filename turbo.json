@@ -5,12 +5,17 @@
       "outputs": ["dist/**", "bundles/**"],
       "dependsOn": ["clean", "^build"]
     },
-    "check": {},
     "clean": {
       "cache": false
     },
+    "check": {
+      "dependsOn": ["^build", "^check"]
+    },
     "lint": {
       "dependsOn": ["^lint"]
+    },
+    "test": {
+      "dependsOn": ["^build", "^test"]
     },
     "format": {},
     "format-check": {}

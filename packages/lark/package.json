@@ -24,7 +24,7 @@
     "clean": "rm -rf dist",
     "build": "rollup -c",
     "check": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest run",
     "lint": "eslint src/**",
     "format": "prettier . --write --ignore-path ../../.gitignore --ignore-path ./.prettierignore",
     "format-check": "prettier . --check --ignore-path ../../.gitignore --ignore-path ./.prettierignore"
