@@ -4,13 +4,13 @@
   "description": "Convert lark cloud documents to markdown",
   "scripts": {
     "build": "turbo run build",
-    "check": "turbo run check",
+    "type-check": "turbo run type-check",
     "clean": "turbo run clean",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "format-check": "turbo run format-check",
-    "release": "turbo run format-check lint check test build && changeset version"
+    "release": "turbo run format-check lint type-check test build && changeset version"
   },
   "keywords": [
     "lark",

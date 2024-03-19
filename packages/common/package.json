@@ -19,7 +19,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rollup -c",
-    "check": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
     "lint": "eslint src/**",
     "format": "prettier . --write --ignore-path ../../.gitignore",
     "format-check": "prettier . --check --ignore-path ../../.gitignore"

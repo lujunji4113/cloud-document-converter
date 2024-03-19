@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  - push
+  - pull_request
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts'
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - run: pnpm run test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts'
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - run: pnpm run lint
+
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts'
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - run: pnpm run format-check
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts'
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - run: pnpm run type-check

@@ -23,7 +23,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rollup -c",
-    "check": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
     "test": "vitest run",
     "lint": "eslint src/**",
     "format": "prettier . --write --ignore-path ../../.gitignore --ignore-path ./.prettierignore",

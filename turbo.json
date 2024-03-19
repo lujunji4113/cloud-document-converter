@@ -8,8 +8,8 @@
     "clean": {
       "cache": false
     },
-    "check": {
-      "dependsOn": ["^build", "^check"]
+    "type-check": {
+      "dependsOn": ["^build", "^type-check"]
     },
     "lint": {
       "dependsOn": ["^lint"]
