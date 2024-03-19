@@ -12,6 +12,7 @@
     "format-check": "turbo run format-check",
     "release": "turbo run format-check lint type-check test build && changeset version"
   },
+  "packageManager": "pnpm@8.15.5",
   "keywords": [
     "lark",
     "markdown"
