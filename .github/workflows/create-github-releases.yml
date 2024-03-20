@@ -1,0 +1,30 @@
+name: Create Github Releases
+
+on:
+  push:
+    tags:
+      - '@dolphin/chrome-extension@*.*.*'
+
+jobs:
+  chrome-extension:
+    if: startsWith(github.ref_name, '@dolphin/chrome-extension')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install
+
+      - run: pnpm run build
+
+      - run: zip -r apps/chrome-extension/chrome-extension.zip apps/chrome-extension/dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: apps/chrome-extension/chrome-extension.zip
