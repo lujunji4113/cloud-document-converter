@@ -5,6 +5,9 @@ on:
     tags:
       - 'chrome-extension@*.*.*'
 
+permissions:
+  contents: write
+
 jobs:
   chrome-extension:
     if: startsWith(github.ref_name, 'chrome-extension')
