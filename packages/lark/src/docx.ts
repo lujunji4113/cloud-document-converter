@@ -201,11 +201,14 @@ interface TableCellBlock extends Block {
   type: BlockType.CELL
 }
 
+interface Callout extends Block {
+  type: BlockType.CALLOUT
+}
+
 interface NotSupportedBlock extends Block {
   type:
     | BlockType.QUOTE
     | BlockType.BITABLE
-    | BlockType.CALLOUT
     | BlockType.CHAT_CARD
     | BlockType.DIAGRAM
     | BlockType.FILE
@@ -232,6 +235,7 @@ type Blocks =
   | ImageBlock
   | TableBlock
   | TableCellBlock
+  | Callout
   | NotSupportedBlock
 
 const chunkBy = <T>(
@@ -485,7 +489,7 @@ type Mutate<T extends Block> = T extends PageBlock
       ? mdast.Heading
       : T extends CodeBlock
         ? mdast.Code
-        : T extends QuoteContainerBlock
+        : T extends QuoteContainerBlock | Callout
           ? mdast.Blockquote
           : T extends BulletBlock | OrderedBlock | TodoBlock
             ? mdast.ListItem
@@ -571,7 +575,8 @@ class Transformer {
         }
         return code
       }
-      case BlockType.QUOTE_CONTAINER: {
+      case BlockType.QUOTE_CONTAINER:
+      case BlockType.CALLOUT: {
         return this.transformParentBlock(
           block,
           () => ({
