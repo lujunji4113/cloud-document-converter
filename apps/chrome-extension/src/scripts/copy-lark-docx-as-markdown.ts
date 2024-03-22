@@ -1,7 +1,7 @@
 import i18next from 'i18next'
-import { docx, Toast } from '@dolphin/lark'
+import { Docx, docx, Toast } from '@dolphin/lark'
 import { generatePublicUrl, makePublicUrlEffective } from '@dolphin/lark/image'
-import { isDefined, stringify } from '@dolphin/common'
+import { isDefined } from '@dolphin/common'
 
 const enum TranslationKey {
   FAILED_TO_COPY_IMAGES = 'failed_to_copy_images',
@@ -68,7 +68,7 @@ const main = async () => {
     })
     .filter(isDefined)
 
-  const markdown = stringify(root)
+  const markdown = Docx.stringify(root)
 
   navigator.clipboard.write([
     new ClipboardItem({

@@ -1,16 +1,20 @@
 import * as mdast from 'mdast'
 import chunk from 'lodash-es/chunk'
+import { compare, isDefined } from '@dolphin/common'
+import { toMarkdown } from 'mdast-util-to-markdown'
+import { gfmStrikethroughToMarkdown } from 'mdast-util-gfm-strikethrough'
+import { gfmTaskListItemToMarkdown } from 'mdast-util-gfm-task-list-item'
+import { gfmTableToMarkdown } from 'mdast-util-gfm-table'
+import { mathToMarkdown, InlineMath } from 'mdast-util-math'
+import { PageMain, User } from './env'
 import {
-  compare,
-  isDefined,
   isBlockquoteContent,
   isParent,
   isPhrasingContent,
   isRootContent,
   isTableCell,
   isListItemContent,
-} from '@dolphin/common'
-import { PageMain, User } from './env'
+} from './utils/mdast'
 
 declare module 'mdast' {
   interface ImageData {
@@ -70,6 +74,7 @@ interface Attributes {
   strikethrough?: string
   inlineCode?: string
   link?: string
+  equation?: string
   [attrName: string]: unknown
 }
 
@@ -439,23 +444,42 @@ export const transformOperationsToPhrasingContents = (
     )
   })
 
-  const nodes = indexToMarks.map((marks, index) => {
-    const { attributes, insert } = operations[index]
+  const createLiteral = (
+    op: Operation,
+  ): mdast.Text | mdast.InlineCode | InlineMath => {
+    const { attributes, insert } = op
+    const { inlineCode, equation } = attributes
 
-    const isInlineCode = Object.keys(attributes).find(
-      attr => attr === 'inlineCode',
-    )
-    let node: mdast.PhrasingContent = {
-      type: isInlineCode ? 'inlineCode' : 'text',
-      value: insert,
+    if (inlineCode) {
+      return {
+        type: 'inlineCode',
+        value: insert,
+      }
     }
 
+    if (equation && equation.length > 1) {
+      return {
+        type: 'inlineMath',
+        value: equation.slice(0, -1),
+      }
+    }
+
+    return {
+      type: 'text',
+      value: insert,
+    }
+  }
+
+  const nodes = indexToMarks.map((marks, index) => {
+    const op = operations[index]
+
+    let node: mdast.PhrasingContent = createLiteral(op)
     for (const mark of marks) {
       node =
         mark === 'link'
           ? {
               type: mark,
-              url: decodeURIComponent(attributes.link ?? ''),
+              url: decodeURIComponent(op.attributes.link ?? ''),
               children: [node],
             }
           : {
@@ -701,6 +725,19 @@ class Transformer {
 export const transformer = new Transformer()
 
 export class Docx {
+  static stringify(root: mdast.Root) {
+    return toMarkdown(root, {
+      extensions: [
+        gfmStrikethroughToMarkdown(),
+        gfmTaskListItemToMarkdown(),
+        gfmTableToMarkdown(),
+        mathToMarkdown({
+          singleDollarTextMath: false,
+        }),
+      ],
+    })
+  }
+
   get rootBlock() {
     if (!PageMain) {
       return null

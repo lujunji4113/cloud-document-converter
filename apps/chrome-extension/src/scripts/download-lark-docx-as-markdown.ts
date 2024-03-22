@@ -1,6 +1,5 @@
 import i18next from 'i18next'
-import { Toast, docx } from '@dolphin/lark'
-import { stringify } from '@dolphin/common'
+import { Toast, Docx, docx } from '@dolphin/lark'
 import { fileSave } from 'browser-fs-access'
 import { fs } from '@zip.js/zip.js'
 import normalizeFileName from 'filenamify/browser'
@@ -118,7 +117,7 @@ const main = async () => {
     }
 
     if (!hasImages) {
-      const markdown = stringify(root)
+      const markdown = Docx.stringify(root)
 
       blob = new Blob([markdown])
     } else {
@@ -173,7 +172,7 @@ const main = async () => {
 
       updateLoading(i18next.t(TranslationKey.STILL_DOWNLOADING))
 
-      const markdown = stringify(root)
+      const markdown = Docx.stringify(root)
 
       zipFs.addText(`${recommendName}.md`, markdown)
 

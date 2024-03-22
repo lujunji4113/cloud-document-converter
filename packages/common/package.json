@@ -10,10 +10,6 @@
     "./utils": {
       "types": "./dist/utils.d.ts",
       "default": "./dist/utils.js"
-    },
-    "./mdast": {
-      "types": "./dist/mdast.d.ts",
-      "default": "./dist/mdast.js"
     }
   },
   "scripts": {
@@ -31,10 +27,5 @@
     "@types/mdast": "^4.0.3",
     "rollup": "^4.12.1"
   },
-  "dependencies": {
-    "mdast-util-gfm-strikethrough": "^2.0.0",
-    "mdast-util-gfm-table": "^2.0.0",
-    "mdast-util-gfm-task-list-item": "^2.0.0",
-    "mdast-util-to-markdown": "^2.1.0"
-  }
+  "dependencies": {}
 }

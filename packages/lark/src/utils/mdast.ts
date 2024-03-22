@@ -1,17 +1,4 @@
-import { toMarkdown } from 'mdast-util-to-markdown'
-import { gfmStrikethroughToMarkdown } from 'mdast-util-gfm-strikethrough'
-import { gfmTaskListItemToMarkdown } from 'mdast-util-gfm-task-list-item'
-import { gfmTableToMarkdown } from 'mdast-util-gfm-table'
 import type * as mdast from 'mdast'
-
-export const stringify = (root: mdast.Root) =>
-  toMarkdown(root, {
-    extensions: [
-      gfmStrikethroughToMarkdown(),
-      gfmTaskListItemToMarkdown(),
-      gfmTableToMarkdown(),
-    ],
-  })
 
 export const isParent = (node: mdast.Node): node is mdast.Parent =>
   'children' in node && Array.isArray(node.children)
