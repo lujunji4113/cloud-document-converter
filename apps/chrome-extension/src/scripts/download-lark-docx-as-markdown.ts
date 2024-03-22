@@ -47,8 +47,7 @@ i18next.init({
         [TranslationKey.DOWNLOADING_IMAGES]:
           '下载图片进度：{{progress}}%（请不要刷新或关闭页面）',
         [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]: '下载图片 {{name}} 失败',
-        [TranslationKey.STILL_SAVING]:
-          '仍在保存中（请不要刷新或关闭页面）',
+        [TranslationKey.STILL_SAVING]: '仍在保存中（请不要刷新或关闭页面）',
         [TranslationKey.DOWNLOAD_COMPLETE]: '下载完成',
       },
     },
