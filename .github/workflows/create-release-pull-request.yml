@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   create-release-pull-request:
     runs-on: ubuntu-latest
