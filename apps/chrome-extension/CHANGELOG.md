@@ -1,5 +1,16 @@
 # @dolphin/chrome-extension
 
+## 1.2.0
+
+### Minor Changes
+
+- e247920: - lark: support transform call out to blockquote
+
+### Patch Changes
+
+- Updated dependencies [e247920]
+  - @dolphin/lark@1.1.0
+
 ## 1.1.2
 
 ### Patch Changes
