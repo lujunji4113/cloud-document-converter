@@ -1,6 +1,5 @@
 {
   "name": "@dolphin/monorepo",
-  "version": "1.0.3",
   "description": "Convert lark cloud documents to markdown",
   "scripts": {
     "build": "turbo run build",
