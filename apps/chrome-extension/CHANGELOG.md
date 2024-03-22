@@ -1,3 +1,11 @@
+## 1.3.2 (2024-03-22)
+
+
+### Bug Fixes
+
+* **chrome-extension:** code style ([b22f9cc](https://github.com/lujunji4113/dolphin/commit/b22f9cc1f2c5a449a8873c94304af72686f0af60))
+
+
 ## 1.3.1 (2024-03-22)
 
 
