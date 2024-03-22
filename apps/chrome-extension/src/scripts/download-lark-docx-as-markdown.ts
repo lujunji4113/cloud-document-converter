@@ -11,7 +11,7 @@ const enum TranslationKey {
   DOWNLOADING_IMAGES = 'downloading_images',
   FAILED_TO_DOWNLOAD_IMAGE = 'failed_to_download_image',
   DOWNLOAD_COMPLETE = 'download_complete',
-  STILL_DOWNLOADING = 'still_downloading',
+  STILL_SAVING = 'still_saving',
 }
 
 enum ToastKey {
@@ -32,8 +32,8 @@ i18next.init({
           'Download images progress: {{progress}}% (please do not refresh or close the page)',
         [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]:
           'Failed to download image {{name}}',
-        [TranslationKey.STILL_DOWNLOADING]:
-          'Still downloading (please do not refresh or close the page)',
+        [TranslationKey.STILL_SAVING]:
+          'Still saving (please do not refresh or close the page)',
         [TranslationKey.DOWNLOAD_COMPLETE]: 'Download complete',
       },
     },
@@ -47,8 +47,8 @@ i18next.init({
         [TranslationKey.DOWNLOADING_IMAGES]:
           '下载图片进度：{{progress}}%（请不要刷新或关闭页面）',
         [TranslationKey.FAILED_TO_DOWNLOAD_IMAGE]: '下载图片 {{name}} 失败',
-        [TranslationKey.STILL_DOWNLOADING]:
-          '仍在下载中（请不要刷新或关闭页面）',
+        [TranslationKey.STILL_SAVING]:
+          '仍在保存中（请不要刷新或关闭页面）',
         [TranslationKey.DOWNLOAD_COMPLETE]: '下载完成',
       },
     },
@@ -170,8 +170,6 @@ const main = async () => {
         }),
       )
 
-      updateLoading(i18next.t(TranslationKey.STILL_DOWNLOADING))
-
       const markdown = Docx.stringify(root)
 
       zipFs.addText(`${recommendName}.md`, markdown)
@@ -179,11 +177,7 @@ const main = async () => {
       blob = await zipFs.exportBlob()
     }
 
-    Toast.remove(ToastKey.DOWNLOADING)
-
-    Toast.success({
-      content: i18next.t(TranslationKey.DOWNLOAD_COMPLETE),
-    })
+    updateLoading(i18next.t(TranslationKey.STILL_SAVING))
 
     return blob
   }
@@ -195,6 +189,11 @@ const main = async () => {
 }
 
 main()
+  .then(() => {
+    Toast.success({
+      content: i18next.t(TranslationKey.DOWNLOAD_COMPLETE),
+    })
+  })
   .catch((error: DOMException | TypeError) => {
     if (error.name !== 'AbortError') {
       Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) })
