@@ -1,5 +1,16 @@
 # @dolphin/lark
 
+## 1.2.0
+
+### Minor Changes
+
+- b2e8805: support inline math
+
+### Patch Changes
+
+- Updated dependencies [b2e8805]
+  - @dolphin/common@2.0.0
+
 ## 1.1.0
 
 ### Minor Changes
