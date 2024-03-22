@@ -8,6 +8,7 @@ import {
   isPhrasingContent,
   isRootContent,
   isTableCell,
+  isListItemContent,
 } from '@dolphin/common'
 import { PageMain, User } from './env'
 
@@ -583,30 +584,35 @@ class Transformer {
       case BlockType.BULLET:
       case BlockType.ORDERED:
       case BlockType.TODO: {
-        const listItem: mdast.ListItem = {
-          type: 'listItem',
-          children: [
-            {
-              type: 'paragraph',
-              children: transformOperationsToPhrasingContents(
-                block.zoneState?.content.ops ?? [],
-              ),
-            },
-          ],
-          ...(block.type === BlockType.TODO
-            ? { checked: Boolean(block.snapshot.done) }
-            : null),
-          ...(block.type === BlockType.ORDERED
-            ? {
-                data: {
-                  seq: /[0-9]+/.test(block.snapshot.seq)
-                    ? Number(block.snapshot.seq)
-                    : 'auto',
-                },
-              }
-            : null),
+        const paragraph: mdast.Paragraph = {
+          type: 'paragraph',
+          children: transformOperationsToPhrasingContents(
+            block.zoneState?.content.ops ?? [],
+          ),
         }
-        return listItem
+        return this.transformParentBlock(
+          block,
+          () => ({
+            type: 'listItem',
+            children: [],
+            ...(block.type === BlockType.TODO
+              ? { checked: Boolean(block.snapshot.done) }
+              : null),
+            ...(block.type === BlockType.ORDERED
+              ? {
+                  data: {
+                    seq: /[0-9]+/.test(block.snapshot.seq)
+                      ? Number(block.snapshot.seq)
+                      : 'auto',
+                  },
+                }
+              : null),
+          }),
+          nodes => [
+            paragraph,
+            ...mergeListItems(nodes).filter(isListItemContent),
+          ],
+        )
       }
       case BlockType.TEXT:
       case BlockType.HEADING7:

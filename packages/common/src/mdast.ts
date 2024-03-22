@@ -39,6 +39,8 @@ export const isBlockquoteContent = (
 ): node is mdast.BlockContent | mdast.DefinitionContent =>
   isBlockContent(node) || isDefinitionContent(node)
 
+export const isListItemContent = isBlockquoteContent
+
 export const isPhrasingContent = (
   node: mdast.Nodes,
 ): node is mdast.PhrasingContent =>
