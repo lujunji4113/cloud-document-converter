@@ -3,32 +3,39 @@ name: Create Github Releases
 on:
   push:
     tags:
-      - 'chrome-extension@*.*.*'
+      - '@dolphin/chrome-extension@*.*.*'
 
 permissions:
   contents: write
 
 jobs:
   chrome-extension:
-    if: startsWith(github.ref_name, 'chrome-extension')
+    if: startsWith(github.ref_name, '@dolphin/chrome-extension')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3.0.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3.0.0
 
-      - uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      - run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-      - run: pnpm run build
+      - name: Build
+        run: pnpm run build
 
-      - run: zip -r apps/chrome-extension/chrome-extension.zip apps/chrome-extension/dist
+      - name: Zip chrome extension
+        run: zip -r apps/chrome-extension/chrome-extension.zip apps/chrome-extension/dist
 
-      - uses: softprops/action-gh-release@v2
+      - name: Create Github release
+        uses: softprops/action-gh-release@v2
         with:
           body: Please refer to [CHANGELOG.md](https://github.com/lujunji4113/dolphin/blob/main/apps/chrome-extension/CHANGELOG.md) for details.
           files: apps/chrome-extension/chrome-extension.zip
