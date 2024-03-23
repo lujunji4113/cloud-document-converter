@@ -665,6 +665,20 @@ export class Transformer {
             )
           }
 
+          if (
+            child.type === BlockType.HEADING1 ||
+            child.type === BlockType.HEADING2 ||
+            child.type === BlockType.HEADING3 ||
+            child.type === BlockType.HEADING4 ||
+            child.type === BlockType.HEADING5 ||
+            child.type === BlockType.HEADING6 ||
+            child.type === BlockType.HEADING7 ||
+            child.type === BlockType.HEADING8 ||
+            child.type === BlockType.HEADING9
+          ) {
+            return [child, ...flatChildren(child.children)]
+          }
+
           if (child.type === BlockType.SYNCED_SOURCE) {
             return flatChildren(child.children)
           }
