@@ -78,6 +78,7 @@ interface Attributes {
   inlineCode?: string
   link?: string
   equation?: string
+  'inline-component'?: string
   [attrName: string]: unknown
 }
 
@@ -430,7 +431,30 @@ export const mergePhrasingContents = (nodes: mdast.PhrasingContent[]) =>
 export const transformOperationsToPhrasingContents = (
   ops: Operation[],
 ): mdast.PhrasingContent[] => {
-  const operations = ops.filter(operation => !operation.attributes.fixEnter)
+  const operations = ops
+    .filter(operation => !operation.attributes.fixEnter)
+    .map(op => {
+      if (op.attributes['inline-component']) {
+        try {
+          const inlineComponent = JSON.parse(op.attributes['inline-component'])
+          if (inlineComponent.type === 'mention_doc') {
+            return {
+              attributes: {
+                ...op.attributes,
+                link: inlineComponent.data.raw_url,
+              },
+              insert: op.insert + inlineComponent.data.title,
+            }
+          }
+
+          return op
+        } catch {
+          return op
+        }
+      }
+
+      return op
+    })
 
   let indexToMarks = operations.map(({ attributes }) => {
     type SupportAttrName = 'italic' | 'bold' | 'strikethrough' | 'link'
