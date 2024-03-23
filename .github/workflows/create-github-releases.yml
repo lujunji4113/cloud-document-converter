@@ -32,7 +32,8 @@ jobs:
         run: pnpm run build
 
       - name: Zip chrome extension
-        run: zip -r apps/chrome-extension/chrome-extension.zip apps/chrome-extension/dist
+        working-directory: apps/chrome-extension
+        run: (cd dist && zip -r ../chrome-extension.zip .)
 
       - name: Create Github release
         uses: softprops/action-gh-release@v2
