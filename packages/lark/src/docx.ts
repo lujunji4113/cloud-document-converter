@@ -209,6 +209,14 @@ interface TableCellBlock extends Block {
   type: BlockType.CELL
 }
 
+interface Grid extends Block<GridColumn> {
+  type: BlockType.GRID
+}
+
+interface GridColumn extends Block {
+  type: BlockType.GRID_COLUMN
+}
+
 interface Callout extends Block {
   type: BlockType.CALLOUT
 }
@@ -251,8 +259,6 @@ interface NotSupportedBlock extends Block {
     | BlockType.CHAT_CARD
     | BlockType.DIAGRAM
     | BlockType.FILE
-    | BlockType.GRID
-    | BlockType.GRID_COLUMN
     | BlockType.IFRAME
     | BlockType.ISV
     | BlockType.MINDNOTE
@@ -274,6 +280,8 @@ type Blocks =
   | ImageBlock
   | TableBlock
   | TableCellBlock
+  | Grid
+  | GridColumn
   | Callout
   | SyncedSource
   | Whiteboard
@@ -627,6 +635,12 @@ export class Transformer {
     const flatChildren = (children: Blocks[]): Blocks[] =>
       children
         .map(child => {
+          if (child.type === BlockType.GRID) {
+            return flatChildren(
+              child.children.map(column => column.children).flat(1),
+            )
+          }
+
           if (child.type === BlockType.SYNCED_SOURCE) {
             return flatChildren(child.children)
           }
