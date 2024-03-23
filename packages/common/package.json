@@ -10,6 +10,10 @@
     "./utils": {
       "types": "./dist/utils.d.ts",
       "default": "./dist/utils.js"
+    },
+    "./image": {
+      "types": "./dist/image.d.ts",
+      "default": "./dist/image.js"
     }
   },
   "scripts": {
