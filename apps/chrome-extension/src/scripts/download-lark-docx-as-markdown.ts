@@ -95,7 +95,9 @@ const main = async () => {
     return
   }
 
-  const { root, images } = docx.intoMarkdownAST()
+  const { root, images } = docx.intoMarkdownAST({
+    whiteboard: true,
+  })
   const recommendName = normalizeFileName(
     docx.pageTitle ? normalizeFileName(docx.pageTitle.slice(0, 100)) : 'doc',
   )
@@ -131,32 +133,55 @@ const main = async () => {
       let downloadedItemsCount = 0
       await Promise.allSettled(
         images.map(async image => {
-          if (image.data) {
-            const { name, fetchSources } = image.data
-            const blobUrl = (await fetchSources())?.src
-            if (!blobUrl) {
-              Toast.error({
-                content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {
-                  name,
-                }),
-              })
+          const evaluateImageFile = async (): Promise<{
+            name: string
+            content: Blob
+          } | null> => {
+            if (!image.data) return null
 
-              return
+            const { name, fetchSources, fetchBlob } = image.data
+            if (fetchBlob) {
+              const content = await fetchBlob()
+              if (!content) return null
+
+              return {
+                name: uniqueFileName('diagram.png'),
+                content,
+              }
             }
 
-            try {
-              const imageFileName = uniqueFileName(name)
-              const imageFilePath = `images/${imageFileName}`
-              const response = await fetch(blobUrl)
-              zipFs.addBlob(imageFilePath, await response.blob())
-              image.url = imageFilePath
-            } catch {
-              Toast.error({
-                content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {
-                  name,
-                }),
-              })
+            if (name && fetchSources) {
+              const sources = await fetchSources()
+              if (!sources) return null
+
+              const { src } = sources
+              const response = await fetch(src)
+              const blob = await response.blob()
+
+              return {
+                name: uniqueFileName(name),
+                content: blob,
+              }
             }
+
+            return null
+          }
+
+          try {
+            const imageFile = await evaluateImageFile()
+            if (!imageFile) return
+
+            const { name, content } = imageFile
+            const imageFilePath = `images/${name}`
+            image.url = imageFilePath
+
+            zipFs.addBlob(imageFilePath, content)
+          } catch {
+            Toast.error({
+              content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {
+                name,
+              }),
+            })
           }
 
           updateLoading(

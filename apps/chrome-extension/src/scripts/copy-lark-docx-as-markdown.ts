@@ -55,7 +55,7 @@ const main = async () => {
 
   const tokens = images
     .map(image => {
-      if (!image.data) return null
+      if (!image.data || !image.data.token) return null
 
       const { token } = image.data
       const publicUrl = generatePublicUrl(token)
