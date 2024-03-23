@@ -17,6 +17,7 @@
   ],
   "author": "Junji Lu",
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.1",
     "eslint": "^8.57.0",
     "happy-dom": "^13.7.8",
