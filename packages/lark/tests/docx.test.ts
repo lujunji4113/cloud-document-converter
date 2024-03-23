@@ -2,11 +2,13 @@ import { test, describe, expect } from 'vitest'
 import * as mdast from 'mdast'
 import {
   BlockType,
+  Transformer,
   mergeListItems,
   mergePhrasingContents,
   transformOperationsToPhrasingContents,
-  transformer,
 } from '../src/docx'
+
+const transformer = new Transformer()
 
 describe('mergeListItems()', () => {
   test('simple example', () => {

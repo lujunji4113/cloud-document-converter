@@ -1,6 +1,6 @@
 import * as mdast from 'mdast'
 import chunk from 'lodash-es/chunk'
-import { compare, isDefined } from '@dolphin/common'
+import { imageDataToBlob, compare, isDefined } from '@dolphin/common'
 import { toMarkdown } from 'mdast-util-to-markdown'
 import { gfmStrikethroughToMarkdown } from 'mdast-util-gfm-strikethrough'
 import { gfmTaskListItemToMarkdown } from 'mdast-util-gfm-task-list-item'
@@ -18,9 +18,10 @@ import {
 
 declare module 'mdast' {
   interface ImageData {
-    name: string
-    token: string
-    fetchSources: () => Promise<ImageSources | null>
+    name?: string
+    token?: string
+    fetchSources?: () => Promise<ImageSources | null>
+    fetchBlob?: () => Promise<Blob | null>
   }
 
   interface ListItemData {
@@ -65,6 +66,7 @@ export enum BlockType {
   CELL = 'table_cell',
   TEXT = 'text',
   VIEW = 'view',
+  WHITEBOARD = 'whiteboard',
 }
 
 interface Attributes {
@@ -156,7 +158,7 @@ interface TextBlock extends Block {
   type: BlockType.TEXT
 }
 
-interface ImageCaption {
+interface Caption {
   text: {
     initialAttributedTexts: {
       text: { 0: string } | null
@@ -170,7 +172,7 @@ interface ImageBlockData {
   height: number
   mimeType: string
   name: string
-  caption?: ImageCaption
+  caption?: Caption
 }
 
 interface ImageSources {
@@ -210,6 +212,33 @@ interface Callout extends Block {
   type: BlockType.CALLOUT
 }
 
+interface RatioApp {
+  ratioAppProxy: {
+    getOriginImageDataByNodeId: (
+      i: 24,
+      o: [''],
+      r: false,
+      n: 2,
+    ) => Promise<{ data: ImageData } | null>
+  }
+}
+
+interface WhiteboardBlock {
+  isolateEnv: {
+    hasRatioApp: () => boolean
+    getRatioApp: () => RatioApp
+  }
+}
+
+interface Whiteboard extends Block {
+  type: BlockType.WHITEBOARD
+  whiteboardBlock?: WhiteboardBlock
+  snapshot: {
+    type: BlockType.WHITEBOARD
+    caption?: Caption
+  }
+}
+
 interface NotSupportedBlock extends Block {
   type:
     | BlockType.QUOTE
@@ -241,6 +270,7 @@ type Blocks =
   | TableBlock
   | TableCellBlock
   | Callout
+  | Whiteboard
   | NotSupportedBlock
 
 const chunkBy = <T>(
@@ -505,6 +535,31 @@ const fetchImageSources = (imageBlock: ImageBlock) => {
   return imageManager.fetch({ token }, {}, sources => sources)
 }
 
+const whiteboardToImageData = async (
+  whiteboard: Whiteboard,
+): Promise<ImageData | null> => {
+  if (!whiteboard.whiteboardBlock) return null
+
+  const { isolateEnv } = whiteboard.whiteboardBlock
+
+  if (!isolateEnv.hasRatioApp()) return null
+
+  const rationApp = isolateEnv.getRatioApp()
+  const imageData = await rationApp.ratioAppProxy.getOriginImageDataByNodeId(
+    24,
+    [''],
+    false,
+    2,
+  )
+
+  if (!imageData) return null
+
+  return imageData.data
+}
+
+const evaluateAlt = (caption?: Caption) =>
+  (caption?.text.initialAttributedTexts.text?.[0] ?? '').slice(0, -1)
+
 type Mutate<T extends Block> = T extends PageBlock
   ? mdast.Root
   : T extends DividerBlock
@@ -523,16 +578,30 @@ type Mutate<T extends Block> = T extends PageBlock
                 ? mdast.Table
                 : T extends TableCellBlock
                   ? mdast.TableCell
-                  : null
+                  : T extends Whiteboard
+                    ? mdast.Image
+                    : null
+
+interface TransformerOptions {
+  whiteboard: boolean
+}
 
 interface TransformResult<T> {
   root: T
   images: mdast.Image[]
 }
 
-class Transformer {
+export class Transformer {
   private parent: mdast.Parent | null = null
   private images: mdast.Image[] = []
+
+  constructor(public options: TransformerOptions = { whiteboard: false }) {}
+
+  private normalizeImage(image: mdast.Image): mdast.Image | mdast.Paragraph {
+    return this.parent?.type === 'tableCell'
+      ? image
+      : { type: 'paragraph', children: [image] }
+  }
 
   private transformParentBlock<T extends Blocks>(
     block: T,
@@ -656,26 +725,52 @@ class Transformer {
         return paragraph
       }
       case BlockType.IMAGE: {
-        const { caption, name, token } = block.snapshot.image
-        const alt = (
-          caption?.text.initialAttributedTexts.text?.[0] ?? ''
-        ).slice(0, -1)
-        const image: mdast.Image = {
-          type: 'image',
-          url: '',
-          alt,
-          data: {
-            name,
-            token,
-            fetchSources: () => fetchImageSources(block),
-          },
+        const imageBlockToImage = (block: ImageBlock) => {
+          const { caption, name, token } = block.snapshot.image
+          const image: mdast.Image = {
+            type: 'image',
+            url: '',
+            alt: evaluateAlt(caption),
+            data: {
+              name,
+              token,
+              fetchSources: () => fetchImageSources(block),
+            },
+          }
+          return image
         }
+
+        const image: mdast.Image = imageBlockToImage(block)
 
         this.images.push(image)
 
-        return this.parent?.type === 'tableCell'
-          ? image
-          : { type: 'paragraph', children: [image] }
+        return this.normalizeImage(image)
+      }
+      case BlockType.WHITEBOARD: {
+        if (!this.options.whiteboard) return null
+
+        const whiteboardToImage = (whiteboard: Whiteboard): mdast.Image => {
+          const image: mdast.Image = {
+            type: 'image',
+            url: '',
+            alt: evaluateAlt(whiteboard.snapshot.caption),
+            data: {
+              fetchBlob: async () => {
+                const imageData = await whiteboardToImageData(whiteboard)
+                if (!imageData) return null
+
+                return await imageDataToBlob(imageData)
+              },
+            },
+          }
+          return image
+        }
+
+        const image: mdast.Image = whiteboardToImage(block)
+
+        this.images.push(image)
+
+        return this.normalizeImage(image)
       }
       case BlockType.TABLE: {
         return this.transformParentBlock(
@@ -722,8 +817,6 @@ class Transformer {
   }
 }
 
-export const transformer = new Transformer()
-
 export class Docx {
   static stringify(root: mdast.Root) {
     return toMarkdown(root, {
@@ -763,10 +856,14 @@ export class Docx {
     )
   }
 
-  intoMarkdownAST(): TransformResult<mdast.Root> {
+  intoMarkdownAST(
+    transformerOptions?: TransformerOptions,
+  ): TransformResult<mdast.Root> {
     if (!this.rootBlock) {
       return { root: { type: 'root', children: [] }, images: [] }
     }
+
+    const transformer = new Transformer(transformerOptions)
 
     return transformer.transform(this.rootBlock)
   }
