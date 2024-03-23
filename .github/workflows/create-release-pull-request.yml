@@ -30,8 +30,5 @@ jobs:
 
       - name: Create Release Pull Request
         uses: changesets/action@v1
-        with:
-          publish: pnpm exec changeset tag
-          createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
