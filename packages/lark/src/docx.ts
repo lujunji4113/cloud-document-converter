@@ -66,6 +66,7 @@ export enum BlockType {
   CELL = 'table_cell',
   TEXT = 'text',
   VIEW = 'view',
+  SYNCED_SOURCE = 'synced_source',
   WHITEBOARD = 'whiteboard',
 }
 
@@ -212,6 +213,10 @@ interface Callout extends Block {
   type: BlockType.CALLOUT
 }
 
+interface SyncedSource extends Block {
+  type: BlockType.SYNCED_SOURCE
+}
+
 interface RatioApp {
   ratioAppProxy: {
     getOriginImageDataByNodeId: (
@@ -270,6 +275,7 @@ type Blocks =
   | TableBlock
   | TableCellBlock
   | Callout
+  | SyncedSource
   | Whiteboard
   | NotSupportedBlock
 
@@ -618,8 +624,19 @@ export class Transformer {
     }
     this.parent = currentParent
 
+    const flatChildren = (children: Blocks[]): Blocks[] =>
+      children
+        .map(child => {
+          if (child.type === BlockType.SYNCED_SOURCE) {
+            return flatChildren(child.children)
+          }
+
+          return child
+        })
+        .flat(1)
+
     currentParent.children = transformChildren(
-      block.children.map(this._transform).filter(isDefined),
+      flatChildren(block.children).map(this._transform).filter(isDefined),
     )
 
     this.parent = previousParent
