@@ -1,4 +1,4 @@
-# cloud-document-converter
+# Cloud Document Converter
 Convert lark cloud documents to markdown.
 
 # Introduction
