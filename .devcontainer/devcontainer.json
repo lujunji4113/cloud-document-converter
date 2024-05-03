@@ -1,22 +1,4 @@
 {
-  "name": "Dolphin",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "installOhMyZsh": false,
-      "installOhMyZshConfig": false
-    }
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "streetsidesoftware.code-spell-checker",
-        "christian-kohler.path-intellisense",
-        "esbenp.prettier-vscode",
-        "Gruntfuggly.todo-tree"
-      ]
-    }
-  }
+	"name": "Node.js & TypeScript",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm"
 }
