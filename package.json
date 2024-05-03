@@ -1,6 +1,7 @@
 {
   "name": "@dolphin/monorepo",
   "description": "Convert lark cloud documents to markdown",
+  "license": "MIT",
   "scripts": {
     "build": "turbo run build",
     "type-check": "turbo run type-check",
