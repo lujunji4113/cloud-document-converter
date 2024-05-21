@@ -16,6 +16,7 @@ chrome.runtime.onInstalled.addListener(() => {
       'https://*.feishu-pre.net/*',
       'https://*.larkoffice.com/*',
     ],
+    contexts: ['page', 'editable'],
   })
 
   chrome.contextMenus.create({
@@ -28,6 +29,7 @@ chrome.runtime.onInstalled.addListener(() => {
       'https://*.feishu-pre.net/*',
       'https://*.larkoffice.com/*',
     ],
+    contexts: ['page', 'editable'],
   })
 })
 
