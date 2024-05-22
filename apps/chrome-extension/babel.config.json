@@ -1,12 +1,6 @@
 {
   "presets": [
     [
-      "@babel/preset-typescript",
-      {
-        "optimizeConstEnums": true
-      }
-    ],
-    [
       "@babel/preset-env",
       {
         "targets": "defaults and fully supports es6-module",

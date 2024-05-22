@@ -2,6 +2,7 @@ import i18next from 'i18next'
 import { Docx, docx, Toast } from '@dolphin/lark'
 import { generatePublicUrl, makePublicUrlEffective } from '@dolphin/lark/image'
 import { isDefined } from '@dolphin/common'
+import { confirm, en, zh } from '../common'
 
 const enum TranslationKey {
   FAILED_TO_COPY_IMAGES = 'failed_to_copy_images',
@@ -22,6 +23,7 @@ i18next.init({
         [TranslationKey.NOT_SUPPORT]:
           'This is not a lark document page and cannot be copied as Markdown',
       },
+      ...en,
     },
     zh: {
       translation: {
@@ -32,6 +34,7 @@ i18next.init({
         [TranslationKey.NOT_SUPPORT]:
           '这不是一个飞书文档页面，无法复制为 Markdown',
       },
+      ...zh,
     },
   },
 })
@@ -69,6 +72,13 @@ const main = async () => {
     .filter(isDefined)
 
   const markdown = Docx.stringify(root)
+
+  if (!window.document.hasFocus()) {
+    const confirmed = await confirm()
+    if (!confirmed) {
+      return
+    }
+  }
 
   navigator.clipboard.write([
     new ClipboardItem({

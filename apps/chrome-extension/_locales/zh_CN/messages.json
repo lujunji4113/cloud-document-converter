@@ -1,8 +1,8 @@
 {
-  "download_as_markdown": {
+  "download_docx_as_markdown": {
     "message": "下载为 Markdown"
   },
-  "copy_as_markdown": {
+  "copy_docx_as_markdown": {
     "message": "复制为 Markdown"
   },
   "by_me_a_coffee": {

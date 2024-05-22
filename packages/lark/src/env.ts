@@ -4,6 +4,10 @@ interface ToastOptions {
   content: string
   key?: string
   keepAlive?: boolean
+  closable?: boolean
+  actionText?: string
+  onActionClick?: () => void
+  onClose?: () => void
 }
 
 export interface Toast {

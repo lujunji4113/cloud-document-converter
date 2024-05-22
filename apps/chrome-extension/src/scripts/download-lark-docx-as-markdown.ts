@@ -3,6 +3,9 @@ import { Toast, Docx, docx } from '@dolphin/lark'
 import { fileSave } from 'browser-fs-access'
 import { fs } from '@zip.js/zip.js'
 import normalizeFileName from 'filenamify/browser'
+import { confirm, en, zh } from '../common'
+
+const DOWNLOAD_ABORTED = 'Download aborted'
 
 const enum TranslationKey {
   CONTENT_LOADING = 'content_loading',
@@ -36,6 +39,7 @@ i18next.init({
           'Still saving (please do not refresh or close the page)',
         [TranslationKey.DOWNLOAD_COMPLETE]: 'Download complete',
       },
+      ...en,
     },
     zh: {
       translation: {
@@ -50,6 +54,7 @@ i18next.init({
         [TranslationKey.STILL_SAVING]: '仍在保存中（请不要刷新或关闭页面）',
         [TranslationKey.DOWNLOAD_COMPLETE]: '下载完成',
       },
+      ...zh,
     },
   },
 })
@@ -179,7 +184,7 @@ const main = async () => {
           } catch {
             Toast.error({
               content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD_IMAGE, {
-                name,
+                name: image.data?.name ?? '',
               }),
             })
           }
@@ -206,6 +211,13 @@ const main = async () => {
     return blob
   }
 
+  if (!navigator.userActivation.isActive) {
+    const confirmed = await confirm()
+    if (!confirmed) {
+      throw new Error(DOWNLOAD_ABORTED)
+    }
+  }
+
   await fileSave(toBlob(), {
     fileName: `${recommendName}${ext}`,
     extensions: [ext],
@@ -218,8 +230,8 @@ main()
       content: i18next.t(TranslationKey.DOWNLOAD_COMPLETE),
     })
   })
-  .catch((error: DOMException | TypeError) => {
-    if (error.name !== 'AbortError') {
+  .catch((error: DOMException | TypeError | Error) => {
+    if (error.name !== 'AbortError' && error.message !== DOWNLOAD_ABORTED) {
       Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) })
     }
   })
