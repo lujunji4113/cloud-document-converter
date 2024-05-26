@@ -1,5 +1,16 @@
 # @dolphin/chrome-extension
 
+## 1.5.0
+
+### Minor Changes
+
+- [`417a7bd`](https://github.com/lujunji4113/cloud-document-converter/commit/417a7bde506723a25e80e2be2168ce891794cfb1) Thanks [@lujunji4113](https://github.com/lujunji4113)! - Add commands to popup page
+
+### Patch Changes
+
+- Updated dependencies [[`417a7bd`](https://github.com/lujunji4113/cloud-document-converter/commit/417a7bde506723a25e80e2be2168ce891794cfb1)]:
+  - @dolphin/lark@2.1.0
+
 ## 1.4.0
 
 ### Minor Changes
