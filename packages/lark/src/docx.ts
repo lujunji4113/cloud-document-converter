@@ -528,7 +528,7 @@ export const transformOperationsToPhrasingContents = (
     if (equation && equation.length > 1) {
       return {
         type: 'inlineMath',
-        value: equation.slice(0, -1),
+        value: equation.slice(0),
       }
     }
 
