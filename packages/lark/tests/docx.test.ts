@@ -1,4 +1,4 @@
-import { test, describe, expect } from 'vitest'
+import { test, describe, expect, it } from 'vitest'
 import * as mdast from 'mdast'
 import {
   BlockType,
@@ -1228,6 +1228,102 @@ describe('transformer.transform()', () => {
         ],
       }
       expect(root).toStrictEqual(expectedRoot)
+    })
+  })
+})
+
+describe('trim end enter', () => {
+  describe('inline math', () => {
+    it('with enter', () => {
+      expect(
+        transformer.transform({
+          type: BlockType.PAGE,
+          snapshot: {
+            type: BlockType.PAGE,
+          },
+          children: [
+            {
+              type: BlockType.TEXT,
+              snapshot: {
+                type: BlockType.TEXT,
+              },
+              zoneState: {
+                allText: '',
+                content: {
+                  ops: [
+                    {
+                      insert: '',
+                      attributes: {
+                        equation: 'math\n',
+                      },
+                    },
+                  ],
+                },
+              },
+              children: [],
+            },
+          ],
+        }).root,
+      ).toStrictEqual({
+        type: 'root',
+        children: [
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'inlineMath',
+                value: 'math',
+              },
+            ],
+          },
+        ],
+      })
+    })
+
+    it('without enter', () => {
+      expect(
+        transformer.transform({
+          type: BlockType.PAGE,
+          snapshot: {
+            type: BlockType.PAGE,
+          },
+          children: [
+            {
+              type: BlockType.TEXT,
+              snapshot: {
+                type: BlockType.TEXT,
+              },
+              zoneState: {
+                allText: '',
+                content: {
+                  ops: [
+                    {
+                      insert: '',
+                      attributes: {
+                        equation: 'math',
+                      },
+                    },
+                  ],
+                },
+              },
+              children: [],
+            },
+          ],
+        }).root,
+      ).toStrictEqual({
+        type: 'root',
+        children: [
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'inlineMath',
+                value: 'math',
+              },
+            ],
+          },
+        ],
+      })
     })
   })
 })
