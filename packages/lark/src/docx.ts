@@ -288,6 +288,14 @@ type Blocks =
   | Whiteboard
   | NotSupportedBlock
 
+/**
+ * @description Removes an enter from the end of this string if it exists.
+ */
+const trimEndEnter = (input: string) =>
+  input.length > 0 && input[input.length - 1] === '\n'
+    ? input.slice(0, -1)
+    : input
+
 const chunkBy = <T>(
   items: T[],
   isEqual: (current: T, next: T) => boolean,
@@ -528,7 +536,7 @@ export const transformOperationsToPhrasingContents = (
     if (equation && equation.length > 1) {
       return {
         type: 'inlineMath',
-        value: equation.slice(0, -1),
+        value: trimEndEnter(equation),
       }
     }
 
@@ -596,7 +604,7 @@ const whiteboardToImageData = async (
 }
 
 const evaluateAlt = (caption?: Caption) =>
-  (caption?.text.initialAttributedTexts.text?.[0] ?? '').slice(0, -1)
+  trimEndEnter(caption?.text.initialAttributedTexts.text?.[0] ?? '')
 
 type Mutate<T extends Block> = T extends PageBlock
   ? mdast.Root
@@ -733,7 +741,7 @@ export class Transformer {
         const code: mdast.Code = {
           type: 'code',
           lang: block.language.toLocaleLowerCase(),
-          value: block.zoneState?.allText.slice(0, -1) ?? '',
+          value: trimEndEnter(block.zoneState?.allText ?? ''),
         }
         return code
       }
@@ -915,7 +923,7 @@ export class Docx {
   get pageTitle() {
     if (!this.rootBlock || !this.rootBlock.zoneState) return null
 
-    return this.rootBlock.zoneState.allText.slice(0, -1)
+    return trimEndEnter(this.rootBlock.zoneState.allText)
   }
 
   isReady() {
