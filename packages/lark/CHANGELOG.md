@@ -1,5 +1,16 @@
 # @dolphin/lark
 
+## 2.1.1
+
+### Patch Changes
+
+- [#3](https://github.com/lujunji4113/cloud-document-converter/pull/3) [`30061c0`](https://github.com/lujunji4113/cloud-document-converter/commit/30061c04642d16f44714c8590253fc0b26b91779) Thanks [@starsflow](https://github.com/starsflow)! - fix: The text content does not necessarily have an ENTER at the end (#3)
+
+  Contributors:
+
+  - @lujunji4113
+  - @starsflow
+
 ## 2.1.0
 
 ### Minor Changes
