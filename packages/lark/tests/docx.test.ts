@@ -1327,3 +1327,51 @@ describe('trim end enter', () => {
     })
   })
 })
+
+describe('inline math', () => {
+  test('inline equation with a single character', () => {
+    expect(
+      transformer.transform({
+        type: BlockType.PAGE,
+        snapshot: {
+          type: BlockType.PAGE,
+        },
+        children: [
+          {
+            type: BlockType.TEXT,
+            snapshot: {
+              type: BlockType.TEXT,
+            },
+            zoneState: {
+              allText: '',
+              content: {
+                ops: [
+                  {
+                    insert: '',
+                    attributes: {
+                      equation: 'a',
+                    },
+                  },
+                ],
+              },
+            },
+            children: [],
+          },
+        ],
+      }).root,
+    ).toStrictEqual({
+      type: 'root',
+      children: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'inlineMath',
+              value: 'a',
+            },
+          ],
+        },
+      ],
+    })
+  })
+})
