@@ -1,5 +1,11 @@
 # @dolphin/lark
 
+## 2.1.2
+
+### Patch Changes
+
+- [#5](https://github.com/lujunji4113/cloud-document-converter/pull/5) [`4078a48`](https://github.com/lujunji4113/cloud-document-converter/commit/4078a48a07b607f9e116c04ac99820b402c4b1c0) Thanks [@lujunji4113](https://github.com/lujunji4113)! - fix: inline equation with a single character will lost after converted
+
 ## 2.1.1
 
 ### Patch Changes

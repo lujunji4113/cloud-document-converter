@@ -1,5 +1,12 @@
 # @dolphin/chrome-extension
 
+## 1.5.2
+
+### Patch Changes
+
+- Updated dependencies [[`4078a48`](https://github.com/lujunji4113/cloud-document-converter/commit/4078a48a07b607f9e116c04ac99820b402c4b1c0)]:
+  - @dolphin/lark@2.1.2
+
 ## 1.5.1
 
 ### Patch Changes
