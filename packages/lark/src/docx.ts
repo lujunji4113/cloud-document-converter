@@ -533,7 +533,7 @@ export const transformOperationsToPhrasingContents = (
       }
     }
 
-    if (equation && equation.length > 1) {
+    if (equation && equation.length > 0) {
       return {
         type: 'inlineMath',
         value: trimEndEnter(equation),
