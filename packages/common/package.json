@@ -29,7 +29,7 @@
     "@dolphin/rollup-config": "workspace:^",
     "@dolphin/typescript-config": "workspace:^",
     "@types/mdast": "^4.0.3",
-    "rollup": "^4.12.1"
+    "rollup": "^4.22.4"
   },
   "dependencies": {}
 }
