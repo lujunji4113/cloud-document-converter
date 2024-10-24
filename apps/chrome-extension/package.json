@@ -1,6 +1,6 @@
 {
   "name": "@dolphin/chrome-extension",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "scripts": {
     "clean": "rm -rf bundles dist/*",
     "copy": "cp -R _locales bundles images manifest.json popup.html popup.js dist",
