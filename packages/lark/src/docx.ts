@@ -15,6 +15,7 @@ import {
   isTableCell,
   isListItemContent,
 } from './utils/mdast'
+import { resolveFileDownloadUrl } from './file'
 
 declare module 'mdast' {
   interface ImageData {
@@ -26,6 +27,11 @@ declare module 'mdast' {
 
   interface ListItemData {
     seq?: number | 'auto'
+  }
+
+  interface LinkData {
+    name?: string
+    fetchFile?: (init?: RequestInit) => Promise<Response>
   }
 }
 
@@ -101,6 +107,7 @@ interface BlockSnapshot {
 interface Block<T extends Blocks = Blocks> {
   type: BlockType
   zoneState?: BlockZoneState
+  record?: { id: string }
   snapshot: BlockSnapshot
   children: T[]
 }
@@ -253,18 +260,31 @@ interface Whiteboard extends Block {
   }
 }
 
+interface View extends Block<File> {
+  type: BlockType.VIEW
+}
+
+interface File extends Block {
+  type: BlockType.FILE
+  snapshot: {
+    type: BlockType.FILE
+    file: {
+      name: string
+      token: string
+    }
+  }
+}
+
 interface NotSupportedBlock extends Block {
   type:
     | BlockType.QUOTE
     | BlockType.BITABLE
     | BlockType.CHAT_CARD
     | BlockType.DIAGRAM
-    | BlockType.FILE
     | BlockType.IFRAME
     | BlockType.ISV
     | BlockType.MINDNOTE
     | BlockType.SHEET
-    | BlockType.VIEW
   children: []
 }
 
@@ -286,6 +306,8 @@ type Blocks =
   | Callout
   | SyncedSource
   | Whiteboard
+  | View
+  | File
   | NotSupportedBlock
 
 /**
@@ -626,22 +648,40 @@ type Mutate<T extends Block> = T extends PageBlock
                   ? mdast.TableCell
                   : T extends Whiteboard
                     ? mdast.Image
-                    : null
+                    : T extends View
+                      ? mdast.Paragraph
+                      : T extends File
+                        ? mdast.Link
+                        : null
 
 interface TransformerOptions {
+  /**
+   * Enable convert whiteboard to image.
+   */
   whiteboard: boolean
+  /**
+   * Enable convert file to resource link.
+   */
+  file: boolean
 }
 
 interface TransformResult<T> {
   root: T
   images: mdast.Image[]
+  files: mdast.Link[]
 }
 
 export class Transformer {
   private parent: mdast.Parent | null = null
   private images: mdast.Image[] = []
+  /**
+   * Resource link to file.
+   */
+  private files: mdast.Link[] = []
 
-  constructor(public options: TransformerOptions = { whiteboard: false }) {}
+  constructor(
+    public options: TransformerOptions = { whiteboard: false, file: false },
+  ) {}
 
   private normalizeImage(image: mdast.Image): mdast.Image | mdast.Paragraph {
     return this.parent?.type === 'tableCell'
@@ -874,6 +914,49 @@ export class Transformer {
               .filter(isPhrasingContent),
         )
       }
+      case BlockType.VIEW: {
+        if (!this.options.file) return null
+
+        const paragraph: mdast.Paragraph = this.transformParentBlock(
+          block,
+          () => ({
+            type: 'paragraph',
+            children: [],
+          }),
+          nodes => nodes.filter(isPhrasingContent),
+        )
+        return paragraph
+      }
+      case BlockType.FILE: {
+        if (!this.options.file) return null
+
+        const { name, token } = block.snapshot.file
+
+        const link: mdast.Link = {
+          type: 'link',
+          url: '',
+          children: [{ type: 'text', value: name }],
+          data: {
+            name,
+            fetchFile: (init?: RequestInit) =>
+              fetch(
+                resolveFileDownloadUrl({
+                  token,
+                  recordId: block.record?.id ?? '',
+                }),
+                {
+                  method: 'Get',
+                  credentials: 'include',
+                  ...init,
+                },
+              ),
+          },
+        }
+
+        this.files.push(link)
+
+        return link
+      }
       default:
         return null
     }
@@ -885,10 +968,12 @@ export class Transformer {
     const result: TransformResult<Mutate<T>> = {
       root: node,
       images: this.images,
+      files: this.files,
     }
 
     this.parent = null
     this.images = []
+    this.files = []
 
     return result
   }
@@ -937,7 +1022,7 @@ export class Docx {
     transformerOptions?: TransformerOptions,
   ): TransformResult<mdast.Root> {
     if (!this.rootBlock) {
-      return { root: { type: 'root', children: [] }, images: [] }
+      return { root: { type: 'root', children: [] }, images: [], files: [] }
     }
 
     const transformer = new Transformer(transformerOptions)

@@ -31,6 +31,7 @@
     "@zip.js/zip.js": "^2.7.40",
     "browser-fs-access": "^0.35.0",
     "filenamify": "^6.0.0",
-    "i18next": "^23.10.1"
+    "i18next": "^23.10.1",
+    "radash": "^12.1.0"
   }
 }
