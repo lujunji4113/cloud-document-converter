@@ -1,5 +1,16 @@
 # @dolphin/chrome-extension
 
+## 1.6.0
+
+### Minor Changes
+
+- [#12](https://github.com/lujunji4113/cloud-document-converter/pull/12) [`ffe4494`](https://github.com/lujunji4113/cloud-document-converter/commit/ffe44945f5b214ce83108a4991799823235d7a87) Thanks [@lujunji4113](https://github.com/lujunji4113)! - Support download files
+
+### Patch Changes
+
+- Updated dependencies [[`9651d35`](https://github.com/lujunji4113/cloud-document-converter/commit/9651d350577ae9e9196f3bd63c2452808ef8614c)]:
+  - @dolphin/lark@2.2.0
+
 ## 1.5.2
 
 ### Patch Changes

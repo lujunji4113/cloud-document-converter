@@ -1,5 +1,11 @@
 # @dolphin/lark
 
+## 2.2.0
+
+### Minor Changes
+
+- [#12](https://github.com/lujunji4113/cloud-document-converter/pull/12) [`9651d35`](https://github.com/lujunji4113/cloud-document-converter/commit/9651d350577ae9e9196f3bd63c2452808ef8614c) Thanks [@lujunji4113](https://github.com/lujunji4113)! - Support transform file block to link
+
 ## 2.1.2
 
 ### Patch Changes
