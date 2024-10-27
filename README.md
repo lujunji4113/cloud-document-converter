@@ -1,10 +1,11 @@
-# Cloud Document Converter
+<p align="center">
+  <p align="center">
+   <img width="150" height="150" src="apps/chrome-extension/images/icon-128.png" alt="Logo">
+  </p>
+	<h1 align="center"><b>Cloud Document Converter</b></h1>
+</p>
 
-Convert lark cloud documents to markdown.
-
-# Introduction
-
-[Cloud Document Converter ](https://chromewebstore.google.com/detail/cloud-document-converter/ehkomhhcinhikfddnmklbloahaakploh)is a Chrome extension that supports downloading/copying Lark Doc as Markdown.
+Cloud Document Converter is a Chrome extension that supports downloading/copying Lark Doc as Markdown.
 
 [中文文档](./README_ZH.md)
 
