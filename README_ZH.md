@@ -1,10 +1,11 @@
-# Cloud Document Converter
+<p align="center">
+  <p align="center">
+   <img width="150" height="150" src="apps/chrome-extension/images/icon-128.png" alt="Logo">
+  </p>
+	<h1 align="center"><b>Cloud Document Converter</b></h1>
+</p>
 
-将飞书云文档转换为 Markdown。
-
-# 简介
-
-[Cloud Document Converter ](https://chromewebstore.google.com/detail/cloud-document-converter/ehkomhhcinhikfddnmklbloahaakploh) 是一个 Chrome 扩展， 支持下载、复制飞书云文档为 Markdown。
+Cloud Document Converter 是一个 Chrome 扩展， 支持下载、复制飞书云文档为 Markdown。
 
 # 功能
 
@@ -32,11 +33,11 @@
 | 图片                  | ✔️           | Image                             |
 | 公示                  | ✔️           | Math Block                        |
 | 高亮块                | ❌           | Blockquote                        |
-| 图表 (流程图、UML 图) | ❌           | _下载为图片_                      |
+| 图表 (流程图、UML 图) | ❌           | Image（仅下载支持）               |
 | 分栏                  | ❌           | _分栏内容会被扁平化_              |
 | 多维表格              | 待定         |                                   |
 | 群名片                | 待定         |                                   |
-| 文件                  | 待定         |                                   |
+| 文件                  | ❌           | Link（仅下载支持）                |
 | 内嵌网页              | 待定         |                                   |
 | 小组件                | 待定         |                                   |
 | 思维笔记              | 待定         |                                   |
@@ -58,6 +59,12 @@
 - 缩进和对齐：待定
 
 - 字体颜色和背景色：待定
+
+# 支持我
+
+如果你喜欢这个项目，欢迎你请我喝杯咖啡！你的支持将帮助我继续改进和维护这个项目。
+
+[请我喝咖啡 ☕](https://lujunji.vercel.app/about)
 
 # 免责声明
 

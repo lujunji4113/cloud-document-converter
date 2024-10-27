@@ -35,11 +35,11 @@ Cloud Document Converter is a Chrome extension that supports downloading/copying
 | Image                                 | ✔️               | Image                             |
 | Inline Math                           | ✔️               | Math Block                        |
 | Call Out                              | ❌               | Blockquote                        |
-| Diagram (Flowcharts and UML diagrams) | ❌               | Image(Download only)              |
+| Diagram (Flowcharts and UML diagrams) | ❌               | Image (Download only)             |
 | Grid                                  | ❌               | _Its content is flattened_        |
 | Bitable                               | To be determined |                                   |
 | Chat Card                             | To be determined |                                   |
-| File                                  | To be determined |                                   |
+| File                                  | ❌               | Link (Download only)              |
 | Iframe                                | To be determined |                                   |
 | ISV                                   | To be determined |                                   |
 | Mind Note                             | To be determined |                                   |
@@ -61,6 +61,12 @@ Cloud Document Converter is a Chrome extension that supports downloading/copying
 Indent and Align: To be determined
 
 Font color and background color: to be determined
+
+# Support me
+
+If you like this project, you are welcome to buy me a cup of coffee! Your support will help me continue to improve and maintain this project.
+
+[Buy me a coffee ☕](https://lujunji.vercel.app/about)
 
 # Disclaimer
 
