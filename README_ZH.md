@@ -1,6 +1,6 @@
 <p align="center">
   <p align="center">
-   <img width="150" height="150" src="apps/chrome-extension/images/icon-128.png" alt="Logo">
+   <img width="150" height="150" src="apps/chrome-extension/images/logo.svg" alt="Logo">
   </p>
 	<h1 align="center"><b>Cloud Document Converter</b></h1>
 </p>
