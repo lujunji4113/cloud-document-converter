@@ -1,0 +1,30 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_2_33)">
+<mask id="mask0_2_33" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+<path d="M24 0H0V24H24V0Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_2_33)">
+<mask id="mask1_2_33" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+<path d="M24 0H0V24H24V0Z" fill="white"/>
+</mask>
+<g mask="url(#mask1_2_33)">
+<path d="M0.9375 0.9375H23.0625V23.25H0.9375V0.9375Z" fill="white"/>
+<path d="M0.27945 0.31875C-0.058486 0.58125 0.0563264 1.03125 2.8334e-06 12.0938C-0.0375456 22.35 0.01661 23.4375 0.27945 23.7C0.561062 23.9625 1.80017 24 12.0134 24C22.1514 24 23.4658 23.9625 23.7285 23.7C23.9914 23.4375 23.9889 22.2 23.9889 12.0938C23.9889 1.29375 24.0101 0.6 23.691 0.31875C23.3717 0.0374995 22.3018 0 12.0885 0C2.64501 0 0.598613 0.0937494 0.27945 0.31875ZM22.9026 12.0938V19.5H21.2316H19.5608L17.0261 21.2812L14.4728 23.0625H7.80794H1.12429V12.0938V1.125H12.0134H22.9026V12.0938Z" fill="url(#paint0_linear_2_33)"/>
+<path d="M4.875 12.0938V18.75H6.64412H8.41326V14.6063V10.4625L10.1824 12.0938L11.9515 13.725L13.6648 12.1125L15.3966 10.5L15.4525 14.625L15.4897 18.75H17.2589H19.0279V12.0938V5.4375H17.5196H16.0298L14.0744 7.25625C13.013 8.26875 12.0446 9.09375 11.9515 9.09375C11.8584 9.09375 10.89 8.26875 9.82854 7.25625L7.8732 5.4375H6.3834H4.875V12.0938Z" fill="url(#paint1_linear_2_33)"/>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_2_33" x1="12.3981" y1="0" x2="12.3981" y2="24" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3BBBC6"/>
+<stop offset="1" stop-color="#1D5B60"/>
+</linearGradient>
+<linearGradient id="paint1_linear_2_33" x1="11.9515" y1="5.4375" x2="11.9515" y2="18.75" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3BBBC6"/>
+<stop offset="1" stop-color="#1D5B60"/>
+</linearGradient>
+<clipPath id="clip0_2_33">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>
+</svg>
