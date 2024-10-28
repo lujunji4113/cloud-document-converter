@@ -1,5 +1,13 @@
 # @dolphin/chrome-extension
 
+## 1.6.1
+
+### Patch Changes
+
+- [`2155c47`](https://github.com/whale4113/cloud-document-converter/commit/2155c47951f74b6a86cf8e7a0e320a08b00730c9) Thanks [@whale4113](https://github.com/whale4113)! - Update popup ui
+
+- [`ef7ec30`](https://github.com/whale4113/cloud-document-converter/commit/ef7ec302874445915ac9c2d9cd7b83a2a5e81ed5) Thanks [@whale4113](https://github.com/whale4113)! - Update icon
+
 ## 1.6.0
 
 ### Minor Changes
