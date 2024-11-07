@@ -25,6 +25,31 @@
     "https://*.feishu-pre.net/*",
     "https://*.larkoffice.com/*"
   ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.feishu.cn/*",
+        "https://*.feishu.net/*",
+        "https://*.larksuite.com/*",
+        "https://*.feishu-pre.net/*",
+        "https://*.larkoffice.com/*"
+      ],
+      "js": ["bundles/content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["bundles/content.js"],
+      "matches": [
+        "https://*.feishu.cn/*",
+        "https://*.feishu.net/*",
+        "https://*.larksuite.com/*",
+        "https://*.feishu-pre.net/*",
+        "https://*.larkoffice.com/*"
+      ]
+    }
+  ],
   "background": {
     "service_worker": "bundles/background.js",
     "type": "module"
