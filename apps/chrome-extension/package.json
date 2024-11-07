@@ -12,26 +12,26 @@
     "format-check": "prettier . --check --ignore-path ./.gitignore --ignore-path ../../.gitignore --ignore-path ./.prettierignore"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.0",
-    "@babel/preset-env": "^7.24.0",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
     "@dolphin/eslint-config": "workspace:^",
     "@dolphin/typescript-config": "workspace:^",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
-    "chrome-types": "^0.1.255",
-    "glob": "^10.3.10",
-    "rollup": "^4.22.4"
+    "chrome-types": "^0.1.316",
+    "glob": "^10.4.5",
+    "rollup": "^4.24.4"
   },
   "dependencies": {
     "@dolphin/common": "workspace:^",
     "@dolphin/lark": "workspace:^",
-    "@zip.js/zip.js": "^2.7.40",
+    "@zip.js/zip.js": "^2.7.53",
     "browser-fs-access": "^0.35.0",
     "filenamify": "^6.0.0",
-    "i18next": "^23.10.1",
+    "i18next": "^23.16.4",
     "radash": "^12.1.0"
   }
 }
