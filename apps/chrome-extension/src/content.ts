@@ -1,13 +1,6 @@
 const COMMENT_BUTTON_CLASS = '.docx-comment__first-comment-btn'
 const HELP_BLOCK_CLASS = '.help-block'
 
-const lengthToNumber = (length: string): number => {
-  // We assume that the length unit is px
-  const numberStr = length.slice(0, -2)
-  const number = window.parseFloat(numberStr)
-  return Number.isNaN(number) ? 0 : number
-}
-
 let disposables: (() => void)[] = []
 
 const dispose = () => {
@@ -26,16 +19,11 @@ const initButtons = () => {
   const root = document.body
 
   const isReady = () => {
-    const commentButton = root.querySelector(COMMENT_BUTTON_CLASS)
-    if (!commentButton) {
-      return false
+    for (const selector of [COMMENT_BUTTON_CLASS, HELP_BLOCK_CLASS]) {
+      if (!root.querySelector(selector)) {
+        return false
+      }
     }
-
-    const helpBlock = root.querySelector(HELP_BLOCK_CLASS)
-    if (!helpBlock) {
-      return false
-    }
-
     return true
   }
 
@@ -55,7 +43,7 @@ const initButtons = () => {
     color: var(--text-title);
     z-index: 3;
   }
-  
+
   [data-CDC-button-type]:hover {
     color: var(--colorful-blue);
   }
@@ -112,63 +100,58 @@ const initButtons = () => {
       }
     })
 
-    const layout = (buttons: Button[]) => {
-      const commentButton = root.querySelector(COMMENT_BUTTON_CLASS)
+    const getOriginalBtnPos = () => {
+      const commentButton: HTMLDivElement | null =
+        root.querySelector(COMMENT_BUTTON_CLASS)
       if (!commentButton) {
         return
       }
 
-      const helpBlock = root.querySelector(HELP_BLOCK_CLASS)
+      const helpBlock: HTMLDivElement | null =
+        root.querySelector(HELP_BLOCK_CLASS)
       if (!helpBlock) {
         return
       }
 
-      if (
-        commentButton instanceof HTMLElement &&
-        helpBlock instanceof HTMLElement
-      ) {
-        const commentButtonComputedStyle =
-          window.getComputedStyle(commentButton)
-        const helpBlockComputedStyle = window.getComputedStyle(helpBlock)
-        const commentButtonBottom = lengthToNumber(
-          commentButtonComputedStyle.bottom,
+      const commentButtonRect = commentButton.getBoundingClientRect()
+      const helpBlockRect = helpBlock.getBoundingClientRect()
+      const windowWidth = window.innerWidth
+      const windowHeight = window.innerHeight
+
+      if (commentButtonRect.right === helpBlockRect.right) {
+        const btnHeight = commentButtonRect.height
+        const gap =
+          Math.abs(helpBlockRect.bottom - commentButtonRect.bottom) - btnHeight
+        const min = Math.min(
+          windowHeight - commentButtonRect.bottom,
+          windowHeight - helpBlockRect.bottom,
         )
-        const commentButtonRight = lengthToNumber(
-          commentButtonComputedStyle.right,
-        )
-        const helpBlockRight =
-          lengthToNumber(helpBlockComputedStyle.right) +
-          lengthToNumber(helpBlockComputedStyle.marginRight)
-        const helpBlockBottom = lengthToNumber(helpBlockComputedStyle.bottom)
-        const buttonHeight = 36
-        const buttonWidth = 36
 
-        if (commentButtonBottom > helpBlockBottom) {
-          // vertical arrangement
-          let startBottom = commentButtonBottom + buttonHeight
-          const startRight = commentButtonRight
-          const gap = commentButtonBottom - helpBlockBottom - buttonHeight
-
-          buttons.forEach(button => {
-            button.element.style.right = `${startRight}px`
-            button.element.style.bottom = `${startBottom + gap}px`
-
-            startBottom += gap + button.height
-          })
-        } else if (commentButtonBottom === helpBlockBottom) {
-          // horizontal arrangement
-          let startRight = helpBlockRight
-          const gap = commentButtonRight - helpBlockRight - buttonWidth
-          const startBottom = commentButtonBottom + buttonHeight + gap
-
-          buttons.forEach(button => {
-            button.element.style.right = `${startRight}px`
-            button.element.style.bottom = `${startBottom}px`
-
-            startRight += gap + button.width
-          })
-        }
+        return [
+          {
+            right: windowWidth - commentButtonRect.right,
+            bottom: min + 2 * gap + 2 * btnHeight,
+          },
+          {
+            right: windowWidth - helpBlockRect.right,
+            bottom: min + 3 * gap + 3 * btnHeight,
+          },
+        ]
+      } else if (commentButtonRect.bottom === helpBlockRect.bottom) {
+        return [
+          { right: windowWidth - commentButtonRect.right, bottom: 90 },
+          { right: windowWidth - helpBlockRect.right, bottom: 90 },
+        ]
       }
+    }
+
+    const layout = (buttons: Button[]) => {
+      const pos = getOriginalBtnPos()
+      if (!pos) return
+      buttons.forEach((button, index) => {
+        button.element.style.right = pos[index].right + 'px'
+        button.element.style.bottom = pos[index].bottom + 'px'
+      })
     }
 
     // When the width of the docx's visible content is too narrow, the position of the comment button changes.
