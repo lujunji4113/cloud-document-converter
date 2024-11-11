@@ -1,6 +1,13 @@
 const COMMENT_BUTTON_CLASS = '.docx-comment__first-comment-btn'
 const HELP_BLOCK_CLASS = '.help-block'
 
+const lengthToNumber = (length: string): number => {
+  // We assume that the length unit is px
+  const numberStr = length.slice(0, -2)
+  const number = window.parseFloat(numberStr)
+  return Number.isNaN(number) ? 0 : number
+}
+
 let disposables: (() => void)[] = []
 
 const dispose = () => {
@@ -120,14 +127,27 @@ const initButtons = () => {
         commentButton instanceof HTMLElement &&
         helpBlock instanceof HTMLElement
       ) {
-        const commentButtonRect = commentButton.getBoundingClientRect()
-        const helpBlockRect = helpBlock.getBoundingClientRect()
+        const commentButtonComputedStyle =
+          window.getComputedStyle(commentButton)
+        const helpBlockComputedStyle = window.getComputedStyle(helpBlock)
+        const commentButtonBottom = lengthToNumber(
+          commentButtonComputedStyle.bottom,
+        )
+        const commentButtonRight = lengthToNumber(
+          commentButtonComputedStyle.right,
+        )
+        const helpBlockRight =
+          lengthToNumber(helpBlockComputedStyle.right) +
+          lengthToNumber(helpBlockComputedStyle.marginRight)
+        const helpBlockBottom = lengthToNumber(helpBlockComputedStyle.bottom)
+        const buttonHeight = 36
+        const buttonWidth = 36
 
-        if (commentButtonRect.right === helpBlockRect.right) {
+        if (commentButtonBottom > helpBlockBottom) {
           // vertical arrangement
-          let startBottom = 124
-          const startRight = 22
-          const gap = 14
+          let startBottom = commentButtonBottom + buttonHeight
+          const startRight = commentButtonRight
+          const gap = commentButtonBottom - helpBlockBottom - buttonHeight
 
           buttons.forEach(button => {
             button.element.style.right = `${startRight}px`
@@ -135,11 +155,11 @@ const initButtons = () => {
 
             startBottom += gap + button.height
           })
-        } else if (commentButtonRect.bottom === helpBlockRect.bottom) {
+        } else if (commentButtonBottom === helpBlockBottom) {
           // horizontal arrangement
-          let startRight = 22
-          const startBottom = 93
-          const gap = 22
+          let startRight = helpBlockRight
+          const gap = commentButtonRight - helpBlockRight - buttonWidth
+          const startBottom = commentButtonBottom + buttonHeight + gap
 
           buttons.forEach(button => {
             button.element.style.right = `${startRight}px`
