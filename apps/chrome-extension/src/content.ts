@@ -38,6 +38,7 @@ const initButtons = () => {
     border: 1px solid var(--line-border-card);
     border-radius: 50%;
     background-color: var(--bg-body);
+    box-shadow: var(--shadow-s4-down);
     cursor: pointer;
     text-align: center;
     color: var(--text-title);
