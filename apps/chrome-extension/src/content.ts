@@ -19,7 +19,8 @@ const initButtons = () => {
   const root = document.body
 
   const isReady = () => {
-    for (const selector of [COMMENT_BUTTON_CLASS, HELP_BLOCK_CLASS]) {
+    // Comment button may not be displayed
+    for (const selector of [HELP_BLOCK_CLASS]) {
       if (!root.querySelector(selector)) {
         return false
       }
@@ -102,22 +103,41 @@ const initButtons = () => {
     })
 
     const getOriginalBtnPos = () => {
-      const commentButton: HTMLDivElement | null =
-        root.querySelector(COMMENT_BUTTON_CLASS)
-      if (!commentButton) {
-        return
-      }
-
       const helpBlock: HTMLDivElement | null =
         root.querySelector(HELP_BLOCK_CLASS)
       if (!helpBlock) {
         return
       }
 
-      const commentButtonRect = commentButton.getBoundingClientRect()
-      const helpBlockRect = helpBlock.getBoundingClientRect()
       const windowWidth = window.innerWidth
       const windowHeight = window.innerHeight
+
+      const helpBlockRect = helpBlock.getBoundingClientRect()
+
+      const commentButton: HTMLDivElement | null =
+        root.querySelector(COMMENT_BUTTON_CLASS)
+
+      // Comment button may not be displayed
+      if (!commentButton) {
+        const startBottom = windowHeight - helpBlockRect.bottom
+        const right = windowWidth - helpBlockRect.right
+        const btnHeight = 36
+        const gap = 14
+        const itemHeight = gap + btnHeight
+
+        return [
+          {
+            right,
+            bottom: startBottom + 1 * itemHeight,
+          },
+          {
+            right,
+            bottom: startBottom + 2 * itemHeight,
+          },
+        ]
+      }
+
+      const commentButtonRect = commentButton.getBoundingClientRect()
 
       if (commentButtonRect.right === helpBlockRect.right) {
         const btnHeight = commentButtonRect.height
@@ -149,6 +169,7 @@ const initButtons = () => {
     const layout = (buttons: Button[]) => {
       const pos = getOriginalBtnPos()
       if (!pos) return
+
       buttons.forEach((button, index) => {
         button.element.style.right = pos[index].right + 'px'
         button.element.style.bottom = pos[index].bottom + 'px'
@@ -186,7 +207,7 @@ const initButtons = () => {
       root.appendChild(button.element)
     })
 
-    disposables.push(() => {
+    const unmount = () => {
       autoLayoutObserver.disconnect()
 
       buttons.forEach(button => {
@@ -198,11 +219,23 @@ const initButtons = () => {
       if (root.contains(style)) {
         root.removeChild(style)
       }
-    })
+    }
+
+    disposables.push(unmount)
+
+    return unmount
   }
 
+  let unmount: (() => void) | null = null
   const init = () => {
-    render()
+    // Rendering may be called multiple times
+    if (unmount) {
+      unmount()
+
+      unmount = null
+    }
+
+    unmount = render()
   }
 
   const initObserver = new MutationObserver(mutations => {
@@ -222,12 +255,12 @@ const initButtons = () => {
     }
   })
 
-  isReady()
-    ? init()
-    : initObserver.observe(root, {
-        childList: true,
-        subtree: true,
-      })
+  isReady() && init()
+
+  initObserver.observe(root, {
+    childList: true,
+    subtree: true,
+  })
 
   disposables.push(() => {
     initObserver.disconnect()
