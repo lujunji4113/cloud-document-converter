@@ -1,5 +1,16 @@
 # @dolphin/chrome-extension
 
+## 1.7.0
+
+### Minor Changes
+
+- [#17](https://github.com/whale4113/cloud-document-converter/pull/17) [`1eae92c`](https://github.com/whale4113/cloud-document-converter/commit/1eae92cbe49d9535998efde2903fe229ea60c641) Thanks [@augustVino](https://github.com/augustVino)! - feat: Add shortcut buttons
+
+  Contributors:
+
+  - @augustVino
+  - @whale4113
+
 ## 1.6.1
 
 ### Patch Changes
