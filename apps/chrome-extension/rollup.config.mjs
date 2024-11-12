@@ -21,9 +21,10 @@ const sharedPlugins = [
 
 export default defineConfig([
   {
-    input: 'src/background.ts',
+    input: ['src/background.ts', 'src/content.ts'],
     output: {
-      file: 'bundles/background.js',
+      entryFileNames: '[name].js',
+      dir: 'bundles',
       format: 'esm',
     },
     plugins: [...sharedPlugins],
