@@ -3,13 +3,13 @@ name: Create Github Releases
 on:
   push:
     tags:
-      - '@dolphin/extension@*.*.*'
+      - '@dolphin/chrome-extension@*.*.*'
 
 permissions:
   contents: write
 
 jobs:
-  extension:
+  chrome-extension:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
