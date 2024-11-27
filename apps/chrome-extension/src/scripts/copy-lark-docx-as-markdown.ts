@@ -81,7 +81,12 @@ const main = async () => {
     }
   }
 
-  navigator.clipboard.write([
+  // clipboard.write() method may be intercepted and overridden by websites
+  const writeToClipboard: Clipboard['write'] = Object.getPrototypeOf(
+    window.navigator.clipboard,
+  ).write.bind(window.navigator.clipboard)
+
+  await writeToClipboard([
     new ClipboardItem({
       'text/plain': new Blob([markdown], { type: 'text/plain' }),
     }),
