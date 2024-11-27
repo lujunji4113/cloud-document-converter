@@ -1,10 +1,10 @@
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
-const resolveRelativePath = relativePath =>
+const resolveRelativePath = (relativePath: string) =>
   fileURLToPath(new URL(`../${relativePath}`, import.meta.url))
 
-const readJson = relativePath => {
+const readJson = (relativePath: string): { version: string } | null => {
   try {
     const filePath = resolveRelativePath(relativePath)
     const fileContent = fs.readFileSync(filePath, 'utf8')
@@ -16,7 +16,7 @@ const readJson = relativePath => {
 }
 
 const main = () => {
-  let manifestJson = readJson('dist/manifest.json')
+  const manifestJson = readJson('dist/manifest.json')
   const packageJson = readJson('package.json')
   if (!manifestJson || !packageJson) return
 

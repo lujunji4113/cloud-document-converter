@@ -1,11 +1,12 @@
 {
   "name": "@dolphin/chrome-extension",
   "version": "1.7.0",
+  "type": "module",
   "scripts": {
     "clean": "rm -rf bundles dist/*",
     "copy": "cp -R _locales bundles images manifest.json popup.html popup.js dist",
-    "build": "rollup -c && mkdir -p dist && npm run copy && node ./scripts/add-version.mjs",
-    "build:dev": "rollup -c --environment BUILD:development && mkdir -p dist && npm run copy && node ./scripts/add-version.mjs",
+    "build": "rollup -c && mkdir -p dist && npm run copy && bun run ./scripts/add-version.ts",
+    "build:dev": "rollup -c --environment BUILD:development && mkdir -p dist && npm run copy && bun run ./scripts/add-version.ts",
     "type-check": "tsc --noEmit",
     "lint": "eslint src/**",
     "format": "prettier . --write --ignore-path ./.gitignore --ignore-path ../../.gitignore",

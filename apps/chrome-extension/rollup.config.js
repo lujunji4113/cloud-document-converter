@@ -8,16 +8,24 @@ import { globSync } from 'glob'
 
 const isDev = process.env.BUILD === 'development'
 
-const sharedPlugins = [
-  typescript(),
-  babel({
-    babelHelpers: 'bundled',
-    // TODO: Exclude node_modules once https://github.com/babel/babel/issues/9419 is resolved
-    exclude: [/node_modules\/core-js/],
-  }),
-  commonjs(),
-  ...(isDev ? [] : [terser()]),
-]
+const createSharedPlugins = (options = {}) => {
+  const { runtime } = options
+
+  const sharedPlugins = [
+    typescript({
+      tsconfig: `tsconfig.${runtime}.json`,
+    }),
+    babel({
+      babelHelpers: 'bundled',
+      // TODO: Exclude node_modules once https://github.com/babel/babel/issues/9419 is resolved
+      exclude: [/node_modules\/core-js/],
+    }),
+    commonjs(),
+    ...(isDev ? [] : [terser()]),
+  ]
+
+  return sharedPlugins
+}
 
 export default defineConfig([
   {
@@ -27,7 +35,7 @@ export default defineConfig([
       dir: 'bundles',
       format: 'esm',
     },
-    plugins: [...sharedPlugins],
+    plugins: [...createSharedPlugins({ runtime: 'extension' })],
   },
   ...globSync('src/scripts/*.ts').map(input => ({
     input,
@@ -35,6 +43,6 @@ export default defineConfig([
       dir: 'bundles/scripts',
       format: 'iife',
     },
-    plugins: [nodeResolve(), ...sharedPlugins],
+    plugins: [nodeResolve(), ...createSharedPlugins({ runtime: 'web' })],
   })),
 ])
