@@ -2,7 +2,8 @@ import i18next from 'i18next'
 import { Docx, docx, Toast } from '@dolphin/lark'
 import { generatePublicUrl, makePublicUrlEffective } from '@dolphin/lark/image'
 import { isDefined } from '@dolphin/common'
-import { confirm, en, zh } from '../common'
+import { en, zh } from '../common/i18n'
+import { confirm } from '../common/notification'
 
 const enum TranslationKey {
   FAILED_TO_COPY_IMAGES = 'failed_to_copy_images',

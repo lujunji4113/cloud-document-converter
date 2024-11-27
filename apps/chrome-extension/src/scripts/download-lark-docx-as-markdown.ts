@@ -4,7 +4,8 @@ import { fileSave } from 'browser-fs-access'
 import { fs } from '@zip.js/zip.js'
 import normalizeFileName from 'filenamify/browser'
 import { cluster } from 'radash'
-import { confirm, en, zh } from '../common'
+import { en, zh } from '../common/i18n'
+import { confirm } from '../common/notification'
 
 const DOWNLOAD_ABORTED = 'Download aborted'
 
