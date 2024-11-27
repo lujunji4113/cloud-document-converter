@@ -44,7 +44,7 @@ i18next.init({
         [TranslationKey.STILL_SAVING]:
           'Still saving (please do not refresh or close the page)',
         [TranslationKey.DOWNLOAD_PROGRESS]:
-          '{name}} download progress: {{progress}} %',
+          '{{name}} download progress: {{progress}} %',
         [TranslationKey.DOWNLOAD_COMPLETE]: 'Download complete',
         [TranslationKey.IMAGE]: 'Image',
         [TranslationKey.FILE]: 'File',
