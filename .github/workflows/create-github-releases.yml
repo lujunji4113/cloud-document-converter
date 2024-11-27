@@ -3,14 +3,13 @@ name: Create Github Releases
 on:
   push:
     tags:
-      - '@dolphin/chrome-extension@*.*.*'
+      - '@dolphin/extension@*.*.*'
 
 permissions:
   contents: write
 
 jobs:
-  chrome-extension:
-    if: startsWith(github.ref_name, '@dolphin/chrome-extension')
+  extension:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,18 +24,32 @@ jobs:
           node-version: 20
           cache: pnpm
 
+      - name: Setup Bun Runtime
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: pnpm run build
-
-      - name: Zip chrome extension
+      - name: Build chrome extension
         working-directory: apps/chrome-extension
-        run: (cd dist && zip -r ../chrome-extension.zip .)
+        run: npx turbo run build
+
+      - name: Build firefox extension
+        working-directory: apps/chrome-extension
+        run: pnpm run build:firefox
+
+      - name: Package chrome extension
+        working-directory: apps/chrome-extension
+        run: npx web-ext build --source-dir dist --filename {name}-{version}-chrome.zip
+
+      - name: Package firefox extension
+        working-directory: apps/chrome-extension
+        run: npx web-ext build --source-dir dist-firefox --filename {name}-{version}-firefox.zip
 
       - name: Create Github release
         uses: softprops/action-gh-release@v2
         with:
           body: Please refer to [CHANGELOG.md](https://github.com/lujunji4113/cloud-document-converter/blob/main/apps/chrome-extension/CHANGELOG.md) for details.
-          files: apps/chrome-extension/chrome-extension.zip
+          files: apps/chrome-extension/web-ext-artifacts/*.zip

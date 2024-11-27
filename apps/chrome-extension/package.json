@@ -3,9 +3,10 @@
   "version": "1.7.0",
   "type": "module",
   "scripts": {
-    "clean": "rm -rf bundles dist/*",
+    "clean": "rm -rf bundles/* dist/* dist-firefox/*",
     "copy": "cp -R _locales bundles images manifest.json popup.html popup.js dist",
     "build": "rollup -c && mkdir -p dist && npm run copy && bun run ./scripts/add-version.ts",
+    "build:firefox": "bun run ./scripts/build-firefox.ts",
     "build:dev": "rollup -c --environment BUILD:development && mkdir -p dist && npm run copy && bun run ./scripts/add-version.ts",
     "type-check": "tsc --noEmit",
     "lint": "eslint src/**",
@@ -22,9 +23,12 @@
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
-    "chrome-types": "^0.1.316",
+    "@types/node": "^22.9.3",
+    "chrome-types": "0.1.321",
+    "execa": "^9.5.1",
     "glob": "^10.4.5",
-    "rollup": "^4.24.4"
+    "rollup": "^4.24.4",
+    "web-ext": "^8.3.0"
   },
   "dependencies": {
     "@dolphin/common": "workspace:^",
