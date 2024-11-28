@@ -17,21 +17,25 @@ interface Manifest {
 }
 
 const main = async () => {
+  const distDirName = 'dist-firefox'
+
   for await (const line of execa('npx', ['turbo', 'run', 'build'])) {
     console.log(line)
   }
+
+  await execa`mkdir -p ${distDirName}`
 
   await execa('cp', [
     '-r',
     ...(await fs.promises
       .readdir('dist')
       .then(paths => paths.map(path => `dist/${path}`))),
-    'dist-firefox',
+    distDirName,
   ])
-  console.log('building: copy dist to dist-firefox')
+  console.log(`building: copy dist to ${distDirName}`)
 
   const chromeManifestFilePath = './dist/manifest.json'
-  const firefoxManifestFilePath = './dist-firefox/manifest.json'
+  const firefoxManifestFilePath = `./${distDirName}/manifest.json`
 
   const manifest: Manifest = JSON.parse(
     await fs.promises.readFile(chromeManifestFilePath, { encoding: 'utf-8' }),
@@ -61,7 +65,7 @@ const main = async () => {
     'web-ext',
     'lint',
     '--source-dir',
-    'dist-firefox',
+    distDirName,
   ])) {
     console.log(`web-ext lint: ${line}`)
   }
