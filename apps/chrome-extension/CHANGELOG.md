@@ -1,5 +1,17 @@
 # @dolphin/chrome-extension
 
+## 1.8.0
+
+### Minor Changes
+
+- [#21](https://github.com/whale4113/cloud-document-converter/pull/21) [`034a9d8`](https://github.com/whale4113/cloud-document-converter/commit/034a9d81d2834d83919ef53077ad9221a1f70c89) Thanks [@whale4113](https://github.com/whale4113)! - feat(chrome-extension): support for firefox extension
+
+### Patch Changes
+
+- [#21](https://github.com/whale4113/cloud-document-converter/pull/21) [`326ec75`](https://github.com/whale4113/cloud-document-converter/commit/326ec75f233495449336919b78463c4259711baf) Thanks [@whale4113](https://github.com/whale4113)! - fix(chrome-extension): insert syntax for missing brackets
+
+- [#21](https://github.com/whale4113/cloud-document-converter/pull/21) [`94bc859`](https://github.com/whale4113/cloud-document-converter/commit/94bc85967ca193f501aaa95274f77419bdb26064) Thanks [@whale4113](https://github.com/whale4113)! - fix(chrome-extension): no permission to copy
+
 ## 1.7.0
 
 ### Minor Changes
