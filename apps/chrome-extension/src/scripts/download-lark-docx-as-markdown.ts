@@ -1,10 +1,12 @@
 import i18next from 'i18next'
 import { Toast, Docx, docx, mdast } from '@dolphin/lark'
-import { fileSave } from 'browser-fs-access'
+import { fileSave, supported } from 'browser-fs-access'
 import { fs } from '@zip.js/zip.js'
 import normalizeFileName from 'filenamify/browser'
 import { cluster } from 'radash'
-import { confirm, en, zh } from '../common'
+import { en, zh } from '../common/i18n'
+import { confirm } from '../common/notification'
+import { legacyFileSave } from '../common/legacy'
 
 const DOWNLOAD_ABORTED = 'Download aborted'
 
@@ -42,7 +44,7 @@ i18next.init({
         [TranslationKey.STILL_SAVING]:
           'Still saving (please do not refresh or close the page)',
         [TranslationKey.DOWNLOAD_PROGRESS]:
-          '{name}} download progress: {{progress}} %',
+          '{{name}} download progress: {{progress}} %',
         [TranslationKey.DOWNLOAD_COMPLETE]: 'Download complete',
         [TranslationKey.IMAGE]: 'Image',
         [TranslationKey.FILE]: 'File',
@@ -287,7 +289,12 @@ type File = mdast.Image | mdast.Link
 
 const downloadFiles = async (
   files: File[],
-  options: ProgressOptions & { batchSize?: number } = {},
+  options: ProgressOptions & {
+    /**
+     * @default 3
+     */
+    batchSize?: number
+  } = {},
 ): Promise<DownloadResult[]> => {
   const { onProgress, onComplete, batchSize = 3 } = options
 
@@ -337,13 +344,6 @@ const main = async () => {
     return
   }
 
-  if (!navigator.userActivation.isActive) {
-    const confirmed = await confirm()
-    if (!confirmed) {
-      throw new Error(DOWNLOAD_ABORTED)
-    }
-  }
-
   const { root, images, files } = docx.intoMarkdownAST({
     whiteboard: true,
     file: true,
@@ -354,6 +354,7 @@ const main = async () => {
     : 'doc'
   const isZip = images.length > 0 || files.length > 0
   const ext = isZip ? '.zip' : '.md'
+  const filename = `${recommendName}${ext}`
 
   const toBlob = async () => {
     Toast.loading({
@@ -373,7 +374,7 @@ const main = async () => {
 
       const results = await Promise.all([
         downloadFiles(images, {
-          batchSize: 10,
+          batchSize: 15,
           onProgress: progress => {
             Toast.loading({
               content: i18next.t(TranslationKey.DOWNLOAD_PROGRESS, {
@@ -420,10 +421,25 @@ const main = async () => {
     return content
   }
 
-  await fileSave(toBlob(), {
-    fileName: `${recommendName}${ext}`,
-    extensions: [ext],
-  })
+  if (supported) {
+    if (!navigator.userActivation.isActive) {
+      const confirmed = await confirm()
+      if (!confirmed) {
+        throw new Error(DOWNLOAD_ABORTED)
+      }
+    }
+
+    await fileSave(toBlob(), {
+      fileName: filename,
+      extensions: [ext],
+    })
+  } else {
+    const blob = await toBlob()
+
+    legacyFileSave(blob, {
+      fileName: filename,
+    })
+  }
 }
 
 main()
@@ -434,7 +450,7 @@ main()
   })
   .catch((error: DOMException | TypeError | Error) => {
     if (error.name !== 'AbortError' && error.message !== DOWNLOAD_ABORTED) {
-      Toast.error({ content: i18next.t(TranslationKey.UNKNOWN_ERROR) })
+      Toast.error({ content: String(error) })
     }
   })
   .finally(() => {

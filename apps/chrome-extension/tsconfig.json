@@ -1,4 +1,8 @@
 {
-  "extends": "@dolphin/typescript-config/base.json",
-  "include": ["src"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.extension.json" }
+  ]
 }

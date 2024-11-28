@@ -1,4 +1,4 @@
-/// <reference types="chrome-types" />
+import { Flag, Message } from './common/message'
 
 enum MenuItemId {
   DOWNLOAD_DOCX_AS_MARKDOWN = 'download_docx_as_markdown',
@@ -33,17 +33,17 @@ chrome.runtime.onInstalled.addListener(() => {
   })
 })
 
-const executeScriptByFlag = (flag: string | number, tabId: number) => {
+const executeScriptByFlag = async (flag: string | number, tabId: number) => {
   switch (flag) {
     case MenuItemId.DOWNLOAD_DOCX_AS_MARKDOWN:
-      chrome.scripting.executeScript({
+      await chrome.scripting.executeScript({
         files: ['bundles/scripts/download-lark-docx-as-markdown.js'],
         target: { tabId },
         world: 'MAIN',
       })
       break
     case MenuItemId.COPY_DOCX_AS_MARKDOWN:
-      chrome.scripting.executeScript({
+      await chrome.scripting.executeScript({
         files: ['bundles/scripts/copy-lark-docx-as-markdown.js'],
         target: { tabId },
         world: 'MAIN',
@@ -60,17 +60,28 @@ chrome.contextMenus.onClicked.addListener(({ menuItemId }, tab) => {
   }
 })
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  chrome.tabs.query({ currentWindow: true, active: true }).then(activeTabs => {
-    const activeTabId = activeTabs.at(0)?.id
+chrome.runtime.onMessage.addListener((_message, sender, sendResponse) => {
+  const message = _message as Message
 
-    if (activeTabs.length === 1 && activeTabId !== undefined) {
-      sendResponse()
+  if (
+    message.flag === Flag.ExecuteCopyScript ||
+    message.flag === Flag.ExecuteDownloadScript
+  ) {
+    const executeScript = async () => {
+      const activeTabs = await chrome.tabs.query({
+        currentWindow: true,
+        active: true,
+      })
 
-      executeScriptByFlag(message.flag, activeTabId)
+      const activeTabId = activeTabs.at(0)?.id
+
+      if (activeTabs.length === 1 && activeTabId !== undefined) {
+        await executeScriptByFlag(message.flag, activeTabId)
+      }
     }
-  })
 
-  // To use `sendResponse()` asynchronously
-  return true
+    executeScript().then(sendResponse)
+
+    return true
+  }
 })
