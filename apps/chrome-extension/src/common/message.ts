@@ -8,13 +8,3 @@ interface ExecuteScriptMessage {
 }
 
 export type Message = ExecuteScriptMessage
-
-export enum StatusCode {
-  Success,
-  Error,
-}
-
-export interface Response {
-  statusCode: StatusCode
-  message?: string
-}
