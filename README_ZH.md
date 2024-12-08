@@ -7,6 +7,8 @@
 
 Cloud Document Converter 是一个浏览器扩展， 支持下载、复制飞书云文档为 Markdown。
 
+[English](./README.md) · **简体中文**
+
 # 安装
 
 从 [Chrome 应用商店](https://chromewebstore.google.com/detail/cloud-document-converter/ehkomhhcinhikfddnmklbloahaakploh)、[Microsoft Edge 加载项](https://microsoftedge.microsoft.com/addons/detail/pcjebkebnehplnpkpnhipagefaffiopp) 和 [Firefox 附加组件](https://addons.mozilla.org/addon/cloud-document-converter) 安装 Cloud Document Converter。
