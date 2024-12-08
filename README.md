@@ -42,7 +42,7 @@ Install Cloud Document Converter from [Chrome Web Store](https://chromewebstore.
 | Bitable                               | To be determined |                                   |
 | Chat Card                             | To be determined |                                   |
 | File                                  | ❌               | Link (Download only)              |
-| Iframe                                | To be determined |                                   |
+| Iframe                                | ✔️               | HTML                              |
 | ISV                                   | To be determined |                                   |
 | Mind Note                             | To be determined |                                   |
 | Sheet                                 | To be determined |                                   |
