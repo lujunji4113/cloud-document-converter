@@ -1,5 +1,11 @@
 # @dolphin/lark
 
+## 2.3.0
+
+### Minor Changes
+
+- [#24](https://github.com/whale4113/cloud-document-converter/pull/24) [`037a5eb`](https://github.com/whale4113/cloud-document-converter/commit/037a5eb0042b7309f3040c9e9233e4094470fcf6) Thanks [@whale4113](https://github.com/whale4113)! - feat: support iframe block
+
 ## 2.2.0
 
 ### Minor Changes
