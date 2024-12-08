@@ -281,7 +281,6 @@ interface NotSupportedBlock extends Block {
     | BlockType.BITABLE
     | BlockType.CHAT_CARD
     | BlockType.DIAGRAM
-    | BlockType.IFRAME
     | BlockType.ISV
     | BlockType.MINDNOTE
     | BlockType.SHEET
@@ -308,7 +307,37 @@ type Blocks =
   | Whiteboard
   | View
   | File
+  | IframeBlock
   | NotSupportedBlock
+
+interface IframeBlock extends Block {
+  type: BlockType.IFRAME
+  snapshot: {
+    type: BlockType.IFRAME
+    iframe: Partial<{
+      height: number
+      component: Partial<{
+        url: string
+      }>
+    }>
+  }
+}
+
+const iframeToHTML = (iframe: IframeBlock): mdast.Html | null => {
+  const { height = 400, component = {} } = iframe.snapshot.iframe
+  const { url } = component
+
+  if (!url) {
+    return null
+  }
+
+  const html = `<iframe src="${url}" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms allow-popups allow-downloads" allowfullscreen allow="encrypted-media; fullscreen; autoplay" referrerpolicy="strict-origin-when-cross-origin" frameborder="0" style="width: 100%; min-height: ${height}px; border-radius: 8px;"></iframe>`
+
+  return {
+    type: 'html',
+    value: html,
+  }
+}
 
 /**
  * @description Removes an enter from the end of this string if it exists.
@@ -652,7 +681,9 @@ type Mutate<T extends Block> = T extends PageBlock
                       ? mdast.Paragraph
                       : T extends File
                         ? mdast.Link
-                        : null
+                        : T extends IframeBlock
+                          ? mdast.Html
+                          : null
 
 interface TransformerOptions {
   /**
@@ -956,6 +987,9 @@ export class Transformer {
         this.files.push(link)
 
         return link
+      }
+      case BlockType.IFRAME: {
+        return iframeToHTML(block)
       }
       default:
         return null
