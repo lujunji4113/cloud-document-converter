@@ -66,7 +66,7 @@ Cloud Document Converter 是一个浏览器扩展， 支持下载、复制飞书
 
 - 字体颜色和背景色：待定
 
-# Contribution
+# 贡献
 
 如果你有兴趣修复问题并直接为代码库做出贡献，请参阅文档 [如何贡献](./contributing.md)。
 
