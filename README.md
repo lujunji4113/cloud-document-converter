@@ -66,6 +66,10 @@ Indent and Align: To be determined
 
 Font color and background color: to be determined
 
+# Contribution
+
+If you are interested in fixing issues and contributing directly to the code base, please see the document [How to Contribute](./contributing.md).
+
 # Support me
 
 If you like this project, you are welcome to buy me a cup of coffee! Your support will help me continue to improve and maintain this project.
