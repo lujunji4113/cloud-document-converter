@@ -1,5 +1,11 @@
 # @dolphin/lark
 
+## 2.4.0
+
+### Minor Changes
+
+- [#27](https://github.com/whale4113/cloud-document-converter/pull/27) [`1f5fc4f`](https://github.com/whale4113/cloud-document-converter/commit/1f5fc4f489db29f53c0381eec9fc3256ac40921a) Thanks [@whale4113](https://github.com/whale4113)! - feat: support heading sequence
+
 ## 2.3.0
 
 ### Minor Changes
