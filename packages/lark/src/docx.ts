@@ -16,6 +16,7 @@ import {
   isListItemContent,
 } from './utils/mdast'
 import { resolveFileDownloadUrl } from './file'
+import isString from 'lodash-es/isString'
 
 declare module 'mdast' {
   interface ImageData {
@@ -132,6 +133,23 @@ interface HeadingBlock extends Block<TextBlock> {
     | BlockType.HEADING8
     | BlockType.HEADING9
   depth: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  snapshot: {
+    type:
+      | BlockType.HEADING1
+      | BlockType.HEADING2
+      | BlockType.HEADING3
+      | BlockType.HEADING4
+      | BlockType.HEADING5
+      | BlockType.HEADING6
+      | BlockType.HEADING7
+      | BlockType.HEADING8
+      | BlockType.HEADING9
+    /**
+     * sequence value
+     */
+    seq?: string | 'auto'
+    seq_level?: string | 'auto'
+  }
 }
 
 interface CodeBlock extends Block<TextBlock> {
@@ -709,6 +727,10 @@ export class Transformer {
    * Resource link to file.
    */
   private files: mdast.Link[] = []
+  /**
+   * heading sequence state
+   */
+  private sequences: (string | undefined)[] = []
 
   constructor(
     public options: TransformerOptions = { whiteboard: false, file: false },
@@ -799,13 +821,41 @@ export class Transformer {
       case BlockType.HEADING4:
       case BlockType.HEADING5:
       case BlockType.HEADING6: {
+        const depth = Number(block.type.at(-1)) as mdast.Heading['depth']
+
         const heading: mdast.Heading = {
           type: 'heading',
-          depth: Number(block.type.at(-1)) as mdast.Heading['depth'],
+          depth,
           children: transformOperationsToPhrasingContents(
             block.zoneState?.content.ops ?? [],
           ),
         }
+
+        if (typeof block.snapshot.seq === 'string') {
+          // reset sequences state
+          this.sequences = this.sequences.slice(0, depth)
+
+          // automatic incremental sequence number
+          if (block.snapshot.seq === 'auto') {
+            const previousSequenceSibling = this.sequences[depth - 1] ?? '0'
+            this.sequences[depth - 1] = String(
+              parseInt(previousSequenceSibling, 10) + 1,
+            )
+          } else {
+            this.sequences[depth - 1] = block.snapshot.seq
+          }
+
+          const sequences =
+            block.snapshot.seq_level === 'auto'
+              ? this.sequences.slice(0, depth).filter(isString)
+              : [block.snapshot.seq]
+
+          heading.children.unshift({
+            type: 'text',
+            value: sequences.join('.') + (sequences.length === 1 ? '. ' : ' '),
+          })
+        }
+
         return heading
       }
       case BlockType.CODE: {
@@ -1008,6 +1058,7 @@ export class Transformer {
     this.parent = null
     this.images = []
     this.files = []
+    this.sequences = []
 
     return result
   }
