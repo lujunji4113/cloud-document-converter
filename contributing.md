@@ -12,7 +12,7 @@ You'll need the following tools:
 
 - [Git](https://git-scm.com/)
 - [Node.JS](https://nodejs.org/en/download/prebuilt-binaries), x64 or ARM64, version >=20.x
-- [Bun](https://bun.sh/). optionally, if you do not choose to build the firefox extension
+- [Bun](https://bun.sh/)
 
 ### Development container
 
