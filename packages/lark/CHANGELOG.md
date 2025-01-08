@@ -1,5 +1,11 @@
 # @dolphin/lark
 
+## 2.4.1
+
+### Patch Changes
+
+- [#30](https://github.com/whale4113/cloud-document-converter/pull/30) [`d32c6db`](https://github.com/whale4113/cloud-document-converter/commit/d32c6db3ca15c81416faa03478e69dd5df5bc1f9) Thanks [@whale4113](https://github.com/whale4113)! - fix: The modal attribute does not exist
+
 ## 2.4.0
 
 ### Minor Changes
