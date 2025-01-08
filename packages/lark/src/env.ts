@@ -38,9 +38,13 @@ export const User = window.User
 
 export interface PageMain {
   blockManager: {
-    model: {
+    /**
+     * @deprecated
+     */
+    model?: {
       rootBlockModel: import('./docx').PageBlock
     }
+    rootBlockModel: import('./docx').PageBlock
   }
 }
 

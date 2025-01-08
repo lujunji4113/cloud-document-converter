@@ -1083,7 +1083,7 @@ export class Docx {
       return null
     }
 
-    return PageMain.blockManager.model.rootBlockModel
+    return PageMain.blockManager.rootBlockModel
   }
 
   get language() {
