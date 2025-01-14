@@ -4,9 +4,10 @@ import { fileSave, supported } from 'browser-fs-access'
 import { fs } from '@zip.js/zip.js'
 import normalizeFileName from 'filenamify/browser'
 import { cluster } from 'radash'
-import { en, zh } from '../common/i18n'
+import { CommonTranslationKey, en, Namespace, zh } from '../common/i18n'
 import { confirm } from '../common/notification'
 import { legacyFileSave } from '../common/legacy'
+import { reportBug } from '../common/issue'
 
 const DOWNLOAD_ABORTED = 'Download aborted'
 
@@ -212,11 +213,17 @@ const downloadImage = async (
     }
 
     return null
-  } catch {
+  } catch (error) {
     Toast.error({
       content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD, {
         name: originName,
       }),
+      actionText: i18next.t(CommonTranslationKey.CONFIRM_REPORT_BUG, {
+        ns: Namespace.COMMON,
+      }),
+      onActionClick: () => {
+        reportBug(error)
+      },
     })
 
     return null
@@ -274,6 +281,12 @@ const downloadFile = async (
       content: i18next.t(TranslationKey.FAILED_TO_DOWNLOAD, {
         name,
       }),
+      actionText: i18next.t(CommonTranslationKey.CONFIRM_REPORT_BUG, {
+        ns: Namespace.COMMON,
+      }),
+      onActionClick: () => {
+        reportBug(error)
+      },
     })
 
     return null
@@ -450,7 +463,15 @@ main()
   })
   .catch((error: DOMException | TypeError | Error) => {
     if (error.name !== 'AbortError' && error.message !== DOWNLOAD_ABORTED) {
-      Toast.error({ content: String(error) })
+      Toast.error({
+        content: String(error),
+        actionText: i18next.t(CommonTranslationKey.CONFIRM_REPORT_BUG, {
+          ns: Namespace.COMMON,
+        }),
+        onActionClick: () => {
+          reportBug(error)
+        },
+      })
     }
   })
   .finally(() => {
