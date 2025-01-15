@@ -1,5 +1,11 @@
 # @dolphin/chrome-extension
 
+## 1.9.0
+
+### Minor Changes
+
+- [#32](https://github.com/whale4113/cloud-document-converter/pull/32) [`a2e001d`](https://github.com/whale4113/cloud-document-converter/commit/a2e001da3307f83b5ae7f7b8dfcc3defde41f3ec) Thanks [@whale4113](https://github.com/whale4113)! - feat: support bug report
+
 ## 1.8.3
 
 ### Patch Changes
