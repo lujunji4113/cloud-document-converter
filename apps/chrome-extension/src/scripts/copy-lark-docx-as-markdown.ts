@@ -2,8 +2,9 @@ import i18next from 'i18next'
 import { Docx, docx, Toast } from '@dolphin/lark'
 import { generatePublicUrl, makePublicUrlEffective } from '@dolphin/lark/image'
 import { isDefined } from '@dolphin/common'
-import { en, zh } from '../common/i18n'
+import { CommonTranslationKey, en, Namespace, zh } from '../common/i18n'
 import { confirm } from '../common/notification'
+import { reportBug } from '../common/issue'
 
 const enum TranslationKey {
   FAILED_TO_COPY_IMAGES = 'failed_to_copy_images',
@@ -102,8 +103,14 @@ const main = async () => {
   }
 }
 
-main().catch(() => {
+main().catch(error => {
   Toast.error({
     content: i18next.t(TranslationKey.UNKNOWN_ERROR),
+    actionText: i18next.t(CommonTranslationKey.CONFIRM_REPORT_BUG, {
+      ns: Namespace.COMMON,
+    }),
+    onActionClick: () => {
+      reportBug(error)
+    },
   })
 })
